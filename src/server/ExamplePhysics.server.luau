@@ -1,3 +1,4 @@
+--[[
 local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local rig = workspace.Rig
@@ -49,3 +50,4 @@ for i = 1, 5 do
     task.wait(1)
     AssemblyLinearVelocityBall()
 end
+--]]

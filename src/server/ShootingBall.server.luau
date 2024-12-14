@@ -45,13 +45,13 @@ local function linearVelocityBall(player, char)
     local HumanoidRootPart = char:WaitForChild("HumanoidRootPart")
     local ballVelocity = ball.LinearVelocity
     ballVelocity.MaxForce = math.huge
-    ballVelocity.VectorVelocity = HumanoidRootPart.CFrame.LookVector * 100
     ball.CFrame = HumanoidRootPart.CFrame * CFrame.new(0, 1, -3)
+    ballVelocity.VectorVelocity = HumanoidRootPart.CFrame.LookVector * 100
     Debris:AddItem(ball, ttl)
 end
 
 ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player)
-    local Gunshsot = SoundService["pistol go pew lol"]:Clone()
+    local Gunshsot = SoundService["Blast Deflector 2 (SFX)"]:Clone()
     Gunshsot.Parent = SoundService
     Gunshsot:Play()
     Debris:AddItem(Gunshsot, 1)

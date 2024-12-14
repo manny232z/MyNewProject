@@ -5,10 +5,16 @@ local SoundService = game:GetService("SoundService")
 local ball_lv = ReplicatedStorage.Ball_LV
 local ttl = 10
 
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function(character)
+        character.Humanoid.WalkSpeed = 30
+        character.Humanoid.JumpHeight = 15
+    end)
+end)
 
 local function linearVelocityBall(player, char)
     local ball = ball_lv:Clone()
-
+    --ball.Size = Vector3.new(160,160,160)
     if player:HasTag("RedTeam") then
         ball.BrickColor = BrickColor.new("Bright red")
 
@@ -39,7 +45,7 @@ local function linearVelocityBall(player, char)
     local HumanoidRootPart = char:WaitForChild("HumanoidRootPart")
     local ballVelocity = ball.LinearVelocity
     ballVelocity.MaxForce = math.huge
-    ballVelocity.VectorVelocity = HumanoidRootPart.CFrame.LookVector * 20
+    ballVelocity.VectorVelocity = HumanoidRootPart.CFrame.LookVector * 100
     ball.CFrame = HumanoidRootPart.CFrame * CFrame.new(0, 1, -3)
     Debris:AddItem(ball, ttl)
 end

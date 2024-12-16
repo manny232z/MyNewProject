@@ -15,9 +15,19 @@ Players.PlayerAdded:Connect(function(player)
     end)
 end)
 
-local function linearVelocityBall(player, char)
+-- heal player function
+local function HealPlayer()
+
+end
+
+-- shooting ball function
+local function linearVelocityBall(player, char, size, effect)
     local ball = ball_lv:Clone()
-    --ball.Size = Vector3.new(7,7,7)
+    if effect ~= nil then
+        local newEffect = effect:Clone()
+        newEffect.Parent = ball 
+    end
+    ball.Size = Vector3.new(size,size,size)
     if player:HasTag("RedTeam") then -- Changes ball color depending on which team the player chose
         ball.BrickColor = BrickColor.new("Bright red")
         ball.Trail.Color = ColorSequence.new(Color3.fromRGB(255, 0, 0))  -- Red
@@ -81,10 +91,24 @@ local function linearVelocityBall(player, char)
 end
 
 -- RemoteEvent for whenever the player clicks or taps their screen to fire the ball function and to do other misellinous things.
-ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player)
-    local Gunshsot = SoundService["Blast Deflector 2 (SFX)"]:Clone()
-    Gunshsot.Parent = SoundService
-    Gunshsot:Play()
-    Debris:AddItem(Gunshsot, 1)
-    linearVelocityBall(player, player.Character)
+ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability)
+    if Ability == 1 then
+        local Gunshsot = SoundService["Blast Deflector 2 (SFX)"]:Clone()
+        Gunshsot.Parent = SoundService
+        Gunshsot:Play()
+        Debris:AddItem(Gunshsot, 1)
+        linearVelocityBall(player, player.Character, 2)
+    elseif Ability == 2 then
+        local Magic1 = SoundService.Magic1:Clone()
+        Magic1.Parent = SoundService
+        Magic1:Play()
+        Debris:AddItem(Magic1, 1)
+        linearVelocityBall(player, player.Character, 5, ReplicatedStorage.Lightningsmall)
+    elseif Ability == 3 then
+        local health = SoundService["UnderTale - Restoring Health Sound Effect"]:Clone()
+        health.Parent = SoundService
+        health:Play()
+        Debris:AddItem(health, 1)
+        --linearVelocityBall(player, player.Character, 2)
+    end
 end)

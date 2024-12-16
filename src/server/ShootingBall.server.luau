@@ -8,7 +8,7 @@ local ball_lv = ReplicatedStorage.Ball_LV
 local ttl = 10
 
 local Touched_Debounce = false
-
+local event_Debounce = false
 --[[
 -- Create collision groups if they don't already exist
 if not pcall(function() PhysicsService:RegisterCollisionGroup("BallGroup") end) then
@@ -36,6 +36,57 @@ local tweeninfo = TweenInfo.new(
 local goals = {
     Transparency = 1
 }
+
+
+local function AbilitiesCD(Ability, TextBoxCD)
+    if Ability == 1 then
+        TextBoxCD.BackgroundTransparency = 0.5
+        print(TextBoxCD)
+        for i = 0.3, 0, -0.1 do
+            TextBoxCD.Text = string.format("%.1f", i)  -- Ensure it displays one decimal place
+            print(i)
+            task.wait(0.1)  -- Wait for 0.1 seconds before the next iteration
+        end
+        TextBoxCD.BackgroundTransparency = 1
+        TextBoxCD.Text = ""  -- Clear the text after the countdown ends
+    end
+
+    if Ability == 2 then
+        TextBoxCD.BackgroundTransparency = 0.5
+        print(TextBoxCD)
+        for i = 0.7, 0, -0.1 do
+            TextBoxCD.Text = string.format("%.1f", i)  -- Ensure it displays one decimal place
+            print(i)
+            task.wait(0.1)  -- Wait for 0.1 seconds before the next iteration
+        end
+        TextBoxCD.BackgroundTransparency = 1
+        TextBoxCD.Text = ""  -- Clear the text after the countdown ends
+    end  
+
+    if Ability == 3 then
+        TextBoxCD.BackgroundTransparency = 0.5
+        print(TextBoxCD)
+        for i = 5, 0, -1 do
+            TextBoxCD.Text = i  -- Ensure it displays one decimal place
+            print(i)
+            task.wait(1)  -- Wait for 0.1 seconds before the next iteration
+        end
+        TextBoxCD.BackgroundTransparency = 1
+        TextBoxCD.Text = ""  -- Clear the text after the countdown ends
+    end  
+
+    if Ability == 4 then
+        TextBoxCD.BackgroundTransparency = 0.5
+        print(TextBoxCD)
+        for i = 5, 0, -1 do
+            TextBoxCD.Text = i  -- Ensure it displays one decimal place
+            print(i)
+            task.wait(1)  -- Wait for 0.1 seconds before the next iteration
+        end
+        TextBoxCD.BackgroundTransparency = 1
+        TextBoxCD.Text = ""  -- Clear the text after the countdown ends
+    end  
+end
 
 -- Adding of speed and jumpheight to the players character.
 Players.PlayerAdded:Connect(function(player)
@@ -72,10 +123,10 @@ local function HealPlayer(player)
     local character = player.Character
     local HealPart = ReplicatedStorage.HealPart:Clone()
     HealPart.Parent =  workspace 
-    HealPart.CFrame = CFrame.new(character.Head.CFrame.X, 6, character.Head.CFrame.Z) *  CFrame.Angles(0, math.rad(-180), math.rad(-90))
-    character.Humanoid.WalkSpeed = 5
+    character.Humanoid.WalkSpeed = 3
     character.Humanoid.JumpHeight = 0
     character.Humanoid.Health = 100
+    HealPart.CFrame = CFrame.new(character.Head.CFrame.X, 6, character.Head.CFrame.Z) *  CFrame.Angles(0, math.rad(-180), math.rad(-90))
     task.wait(1)
     TweenService:Create(HealPart, tweeninfo, goals):Play() -- tween heal part to fully transparent
     Debris:AddItem(HealPart, 3)
@@ -154,31 +205,38 @@ local function linearVelocityBall(player, char, size, effect)
 end
 
 -- RemoteEvent for whenever the player clicks or taps their screen to fire the ball function and to do other misellinous things.
-ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability)
-    if Ability == 1 then
-        local Gunshsot = SoundService["Blast Deflector 2 (SFX)"]:Clone()
-        Gunshsot.Parent = SoundService
-        Gunshsot:Play()
-        Debris:AddItem(Gunshsot, 1)
-        linearVelocityBall(player, player.Character, 2)
-    elseif Ability == 2 then
-        local Magic1 = SoundService.Magic1:Clone()
-        Magic1.Parent = SoundService
-        Magic1:Play()
-        Debris:AddItem(Magic1, 1)
-        linearVelocityBall(player, player.Character, 5, ReplicatedStorage.Lightningsmall)
-    elseif Ability == 3 then
-        local health = SoundService["UnderTale - Restoring Health Sound Effect"]:Clone()
-        health.Parent = SoundService
-        health:Play()
-        Debris:AddItem(health, 1)
-        HealPlayer(player)
-        --linearVelocityBall(player, player.Character, 2)
-    elseif Ability == 4 then
-        local rockEffect = SoundService["Rock Impact 1 (SFX)"]:Clone()
-        rockEffect.Parent = SoundService
-        rockEffect:Play()
-        Debris:AddItem(rockEffect, 3)
-        WallAbility(player)
+ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, abiityCD, TextBoxCD)
+    if event_Debounce == false then
+        event_Debounce = true
+        if Ability == 1 then
+            local Gunshsot = SoundService["Blast Deflector 2 (SFX)"]:Clone()
+            Gunshsot.Parent = SoundService
+            Gunshsot:Play()
+            Debris:AddItem(Gunshsot, 1)
+            linearVelocityBall(player, player.Character, 2)
+        elseif Ability == 2 then
+            local Magic1 = SoundService.Magic1:Clone()
+            Magic1.Parent = SoundService
+            Magic1:Play()
+            Debris:AddItem(Magic1, 1)
+            linearVelocityBall(player, player.Character, 5, ReplicatedStorage.Lightningsmall)
+        elseif Ability == 3 then
+            local health = SoundService["Undertale - Heal"]:Clone()
+            health.Parent = SoundService
+            health:Play()
+            Debris:AddItem(health, 1)
+            HealPlayer(player)
+            --linearVelocityBall(player, player.Character, 2)
+        elseif Ability == 4 then
+            local rockEffect = SoundService["Rock Impact 1 (SFX)"]:Clone()
+            rockEffect.Parent = SoundService
+            rockEffect:Play()
+            Debris:AddItem(rockEffect, 3)
+            WallAbility(player)
+        end 
+        local co = coroutine.create(AbilitiesCD)
+        coroutine.resume(co, Ability, TextBoxCD)
+        task.wait(abiityCD)
+        event_Debounce = false
     end
-end)
+end) 

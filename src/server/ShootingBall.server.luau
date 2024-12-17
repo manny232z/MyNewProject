@@ -119,6 +119,11 @@ local function WallAbility(player)
         --[[if object.Name == "Ball_LV" or object.Name == "MassiveBall_LV" then
             object:Destroy()
         end--]]
+        if object:FindFirstChild("LinearVelocity") then
+            object.LinearVelocity:Destroy()
+        else
+            print("No LinearVelocity found")
+        end
         if object.Name == "Ball_LV" and wallTouched_Debouce == false then
             wallTouched_Debouce = true
             if Wall.Health.Value <= 60 then
@@ -148,7 +153,11 @@ local function WallAbility(player)
             end
             task.wait(0.3)
             --object:Destroy()
-            object.LinearVelocity:Destroy()
+            if object:FindFirstChild("LinearVelocity") then
+                object.LinearVelocity:Destroy()
+            else
+                print("No LinearVelocity found")
+            end
             Debris:AddItem(SoundSFX, 2)
             task.wait(0.2)
             wallTouched_Debouce = false
@@ -182,7 +191,11 @@ local function WallAbility(player)
             end
             task.wait(0.3)
             --object:Destroy()
-            object.LinearVelocity:Destroy()
+            if object:FindFirstChild("LinearVelocity") then
+                object.LinearVelocity:Destroy()
+            else
+                print("No LinearVelocity found")
+            end
             Debris:AddItem(SoundSFX, 2)
             task.wait(0.2)
             wallTouched_Debouce2 = false

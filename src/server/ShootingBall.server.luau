@@ -8,12 +8,14 @@ local ball_lv = ReplicatedStorage.Ball_LV
 local ttl = 10
 
 local Touched_Debounce = false
-local event_Debounce = false
 
 local ability1Debounce =  false
 local ability2Debounce = false
 local ability3Debounce = false
 local ability4Debounce = false
+
+local wallTouched_Debouce = false
+local wallTouched_Debouce2 = false
 
 --[[
 -- Create collision groups if they don't already exist
@@ -112,13 +114,78 @@ local function WallAbility(player)
 
     -- Position the wall 8 studs in front of the player's head
     Wall.CFrame = head.CFrame * CFrame.new(0, 0, -12)
+
     Wall.Touched:Connect(function(object)
-        if object.Name == "Ball_LV" then
+        --[[if object.Name == "Ball_LV" or object.Name == "MassiveBall_LV" then
             object:Destroy()
-            local ArmorSound = SoundService["Lamp Metal And Glass Rattle 1 (SFX)"]:Clone()
-            ArmorSound.Parent = SoundService
-            ArmorSound:Play()
-            Debris:AddItem(ArmorSound,2)
+        end--]]
+        if object.Name == "Ball_LV" and wallTouched_Debouce == false then
+            wallTouched_Debouce = true
+            if Wall.Health.Value <= 60 then
+                Wall.BillboardGui.Frame.HealthLabel.TextColor3 = Color3.new(1, 0.278431, 0.278431)
+                
+            end
+            Wall.Health.Value -= 5
+            for i, v in pairs(Wall:GetChildren()) do
+                if v.Name == "MinecraftBreakDecal" then
+                    v.Transparency -= 0.1 / 2
+                end
+            end
+            local WallHP = Wall.Health.Value
+            print("Wall hp is "..WallHP.."%")
+            if Wall.Health.Value > -5 then
+                Wall.BillboardGui.Frame.HealthLabel.Text = WallHP.."%"
+            else
+                Wall.BillboardGui.Frame.HealthLabel.Text = "0%"
+            end
+            if Wall.Health.Value <= 0 then
+                Wall.CanCollide = false
+            end
+            local SoundSFX = SoundService["Shale Break 1 (SFX)"]:Clone()
+            SoundSFX.Parent = SoundService
+            if not SoundSFX.Playing then
+                SoundSFX:Play()
+            end
+            task.wait(0.3)
+            --object:Destroy()
+            object.LinearVelocity:Destroy()
+            Debris:AddItem(SoundSFX, 2)
+            task.wait(0.2)
+            wallTouched_Debouce = false
+
+        elseif object.Name == "MassiveBall_LV" and wallTouched_Debouce2 == false then
+            wallTouched_Debouce2 = true
+            if Wall.Health.Value <= 60 then
+                Wall.BillboardGui.Frame.HealthLabel.TextColor3 = Color3.new(1, 0.278431, 0.278431)
+                
+            end
+            Wall.Health.Value -= 10
+            for i, v in pairs(Wall:GetChildren()) do
+                if v.Name == "MinecraftBreakDecal" then
+                    v.Transparency -= 0.1 
+                end
+            end
+            local WallHP = Wall.Health.Value
+            print("Wall hp is "..WallHP.."%")
+            if Wall.Health.Value > -5 then
+                Wall.BillboardGui.Frame.HealthLabel.Text = WallHP.."%"
+            else
+                Wall.BillboardGui.Frame.HealthLabel.Text = "0%"
+            end
+            if Wall.Health.Value <= 0 then
+                Wall.CanCollide = false
+            end
+            local SoundSFX = SoundService["Rock Impact 22 (SFX)"]:Clone()
+            SoundSFX.Parent = SoundService
+            if not SoundSFX.Playing then
+                SoundSFX:Play()
+            end
+            task.wait(0.3)
+            --object:Destroy()
+            object.LinearVelocity:Destroy()
+            Debris:AddItem(SoundSFX, 2)
+            task.wait(0.2)
+            wallTouched_Debouce2 = false
         end
     end)
 end
@@ -149,6 +216,9 @@ local function linearVelocityBall(player, char, size, effect)
         newEffect.Parent = ball 
     end
     ball.Size = Vector3.new(size,size,size)
+    if size == 5 then
+        ball.Name = "MassiveBall_LV"
+    end
     if player:HasTag("RedTeam") then -- Changes ball color depending on which team the player chose
         ball.BrickColor = BrickColor.new("Bright red")
         ball.Trail.Color = ColorSequence.new(Color3.fromRGB(255, 0, 0))  -- Red

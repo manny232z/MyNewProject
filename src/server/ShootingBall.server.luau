@@ -100,7 +100,7 @@ end
 Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function(character)
         character.Humanoid.WalkSpeed = 22
-        character.Humanoid.JumpHeight = 8
+        character.Humanoid.JumpHeight = 0
     end)
 end)
 
@@ -231,7 +231,7 @@ local function HealPlayer(player)
     Debris:AddItem(HealPart, 3)
     task.wait(3)
     character.Humanoid.WalkSpeed = 30
-    character.Humanoid.JumpHeight = 15
+   -- character.Humanoid.JumpHeight = 15
 end
 
 -- shooting ball function
@@ -277,13 +277,13 @@ local function linearVelocityBall(player, char, size, effect)
                     --Touched_Debounce = true
                     ball.Hit.Value = true
 
-                    if hit.Parent.Humanoid.Health == 50 then -- Checks if player has half hp to give shooter kill point - if their on 50hp that means the damage they're finna get dealt will kill them.
+                    if hit.Parent.Humanoid.Health <= 50 then -- Checks if player has half hp to give shooter kill point - if their on 50hp that means the damage they're finna get dealt will kill them.
                         player.leaderstats.kills.Value += 1
                         SoundService["strong sword slash"]:Play()
                     end
                     print("Touched enemy player / dmg inflicted")
                     ball.Material = Enum.Material.Neon
-                    hit.Parent.Humanoid.Health -= 50
+                    hit.Parent.Humanoid.Health -= 55
                 elseif hit.Parent.name == char.name then
                     print("touched player who shot / dmg ignored")
                     --ball.Material = Enum.Material.ForceField
@@ -304,39 +304,56 @@ local function linearVelocityBall(player, char, size, effect)
     Debris:AddItem(ball, ttl)
 end
 
--- RemoteEvent for whenever the player clicks or taps their screen to fire the ball function and to do other misellinous things.
-ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, abiityCD, TextBoxCD)
+local playerAbilityDebounces = {}  -- Table to store debounces for each player and ability
 
-    if Ability == 1 and ability1Debounce == false then
-        ability1Debounce = true
-        local Gunshsot = SoundService["Blast Deflector 2 (SFX)"]:Clone()
-        Gunshsot.Parent = SoundService
-        Gunshsot:Play()
-        Debris:AddItem(Gunshsot, 1)
+ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, abilityCD, TextBoxCD)
+    -- Initialize the player's debounce table if it doesn't exist yet
+    if not playerAbilityDebounces[player.UserId] then
+        playerAbilityDebounces[player.UserId] = {
+            ability1Debounce = false,
+            ability2Debounce = false,
+            ability3Debounce = false,
+            ability4Debounce = false
+        }
+    end
+
+    -- Check and process the ability based on which ability was selected
+    local playerDebounces = playerAbilityDebounces[player.UserId]
+
+    if Ability == 1 and not playerDebounces.ability1Debounce then
+        playerDebounces.ability1Debounce = true
+        local Gunshot = SoundService["Blast Deflector 2 (SFX)"]:Clone()
+        Gunshot.Parent = SoundService
+        Gunshot:Play()
+        Debris:AddItem(Gunshot, 1)
 
         linearVelocityBall(player, player.Character, 2)
+
         local co = coroutine.create(AbilitiesCD)
         coroutine.resume(co, Ability, TextBoxCD)
-        task.wait(abiityCD)
-        task.wait(0.2)
-        ability1Debounce = false
 
-    elseif Ability == 2 and ability2Debounce == false then
-        ability2Debounce = true
+        task.wait(abilityCD)
+        task.wait(0.2)
+        playerDebounces.ability1Debounce = false
+
+    elseif Ability == 2 and not playerDebounces.ability2Debounce then
+        playerDebounces.ability2Debounce = true
         local Magic1 = SoundService.Magic1:Clone()
         Magic1.Parent = SoundService
         Magic1:Play()
         Debris:AddItem(Magic1, 1)
 
         linearVelocityBall(player, player.Character, 5, ReplicatedStorage.Lightningsmall)
+
         local co = coroutine.create(AbilitiesCD)
         coroutine.resume(co, Ability, TextBoxCD)
-        task.wait(abiityCD)
-        task.wait(0.2)
-        ability2Debounce = false
 
-    elseif Ability == 3 and ability3Debounce == false then
-        ability3Debounce = true
+        task.wait(abilityCD)
+        task.wait(0.2)
+        playerDebounces.ability2Debounce = false
+
+    elseif Ability == 3 and not playerDebounces.ability3Debounce then
+        playerDebounces.ability3Debounce = true
         local health = SoundService["Undertale - Heal"]:Clone()
         health.Parent = SoundService
         health:Play()
@@ -345,12 +362,13 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
 
         local co = coroutine.create(AbilitiesCD)
         coroutine.resume(co, Ability, TextBoxCD)
-        task.wait(abiityCD)
+
+        task.wait(abilityCD)
         task.wait(1)
-        ability3Debounce = false
-        --linearVelocityBall(player, player.Character, 2)
-    elseif Ability == 4 and ability4Debounce == false then
-        ability4Debounce = true
+        playerDebounces.ability3Debounce = false
+
+    elseif Ability == 4 and not playerDebounces.ability4Debounce then
+        playerDebounces.ability4Debounce = true
         local rockEffect = SoundService["Rock Impact 1 (SFX)"]:Clone()
         rockEffect.Parent = SoundService
         rockEffect:Play()
@@ -359,8 +377,9 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
 
         local co = coroutine.create(AbilitiesCD)
         coroutine.resume(co, Ability, TextBoxCD)
-        task.wait(abiityCD)
+
+        task.wait(abilityCD)
         task.wait(1.5)
-        ability4Debounce = false
-    end 
-end) 
+        playerDebounces.ability4Debounce = false
+    end
+end)

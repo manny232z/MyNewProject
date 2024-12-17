@@ -212,20 +212,24 @@ end
 local function HealPlayer(player)
     local character = player.Character
     local HealPart = ReplicatedStorage.HealPart:Clone()
-    HealPart.Parent =  workspace 
-    character.Humanoid.WalkSpeed = 3
+    character.Humanoid.WalkSpeed = 0
     character.Humanoid.JumpHeight = 0
     HealPart.Touched:Connect(function(otherPart)
         if otherPart.Parent:IsA("Model") then
             local Humanoid = otherPart.Parent.Humanoid
-            Humanoid.Health += 4
-            task.wait(0.3)
+            for i = character.Humanoid.Health, 100, 7.5 do
+                task.wait(0.2)
+                Humanoid.Health = i
+            end
         end
     end)
+    task.wait(0.2)
     HealPart.CFrame = CFrame.new(character.Head.CFrame.X, 6, character.Head.CFrame.Z) *  CFrame.Angles(0, math.rad(-180), math.rad(-90))
+    HealPart.Parent =  workspace 
     task.wait(1)
     TweenService:Create(HealPart, tweeninfo, goals):Play() -- tween heal part to fully transparent
     Debris:AddItem(HealPart, 3)
+    task.wait(3)
     character.Humanoid.WalkSpeed = 30
     character.Humanoid.JumpHeight = 15
 end

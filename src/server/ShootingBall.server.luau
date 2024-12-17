@@ -9,6 +9,12 @@ local ttl = 10
 
 local Touched_Debounce = false
 local event_Debounce = false
+
+local ability1Debounce =  false
+local ability2Debounce = false
+local ability3Debounce = false
+local ability4Debounce = false
+
 --[[
 -- Create collision groups if they don't already exist
 if not pcall(function() PhysicsService:RegisterCollisionGroup("BallGroup") end) then
@@ -37,7 +43,7 @@ local goals = {
     Transparency = 1
 }
 
-
+-- Function for ability cooldown text 
 local function AbilitiesCD(Ability, TextBoxCD)
     if Ability == 1 then
         TextBoxCD.BackgroundTransparency = 0.5

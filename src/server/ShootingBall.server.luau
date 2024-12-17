@@ -215,7 +215,13 @@ local function HealPlayer(player)
     HealPart.Parent =  workspace 
     character.Humanoid.WalkSpeed = 3
     character.Humanoid.JumpHeight = 0
-    character.Humanoid.Health = 100
+    HealPart.Touched:Connect(function(otherPart)
+        if otherPart.Parent:IsA("Model") then
+            local Humanoid = otherPart.Parent.Humanoid
+            Humanoid.Health += 4
+            task.wait(0.3)
+        end
+    end)
     HealPart.CFrame = CFrame.new(character.Head.CFrame.X, 6, character.Head.CFrame.Z) *  CFrame.Angles(0, math.rad(-180), math.rad(-90))
     task.wait(1)
     TweenService:Create(HealPart, tweeninfo, goals):Play() -- tween heal part to fully transparent

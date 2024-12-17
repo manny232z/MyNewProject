@@ -269,8 +269,4 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
         task.wait(1.5)
         ability4Debounce = false
     end 
-    --[[local co = coroutine.create(AbilitiesCD)
-    coroutine.resume(co, Ability, TextBoxCD)
-    task.wait(abiityCD)
-    event_Debounce = false--]]
 end) 

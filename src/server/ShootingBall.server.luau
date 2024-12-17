@@ -262,25 +262,22 @@ local function linearVelocityBall(player, char, size, effect)
     ball.Touched:Connect(function(hit)
         -- touched event for dmg on balls, and also debounce of 0.5 seconds so players won't die so fast.
         if hit.Parent:isA("Model") then
-            if Touched_Debounce == false then
-                
-                if hit.Parent.name == char.name then
-                    print("touched player who shot / dmg ignored")
-                    --ball.Material = Enum.Material.ForceField
-                    return
-                elseif hit.Parent.name ~= char.name then
+            if ball.Hit.Value == false then
+                if hit.Parent.name ~= char.name then
                     --Touched_Debounce = true
+                    ball.Hit.Value = true
 
                     if hit.Parent.Humanoid.Health == 50 then -- Checks if player has half hp to give shooter kill point - if their on 50hp that means the damage they're finna get dealt will kill them.
                         player.leaderstats.kills.Value += 1
                         SoundService["strong sword slash"]:Play()
                     end
-
-                    hit.Parent.Humanoid.Health -= 50
                     print("Touched enemy player / dmg inflicted")
                     ball.Material = Enum.Material.Neon
-                    task.wait(0.3)
-                    Touched_Debounce = false
+                    hit.Parent.Humanoid.Health -= 50
+                elseif hit.Parent.name == char.name then
+                    print("touched player who shot / dmg ignored")
+                    --ball.Material = Enum.Material.ForceField
+                    return
                 end
             else
                 print("Dmg debounce")

@@ -212,37 +212,65 @@ end
 
 -- RemoteEvent for whenever the player clicks or taps their screen to fire the ball function and to do other misellinous things.
 ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, abiityCD, TextBoxCD)
-    if event_Debounce == false then
-        event_Debounce = true
-        if Ability == 1 then
-            local Gunshsot = SoundService["Blast Deflector 2 (SFX)"]:Clone()
-            Gunshsot.Parent = SoundService
-            Gunshsot:Play()
-            Debris:AddItem(Gunshsot, 1)
-            linearVelocityBall(player, player.Character, 2)
-        elseif Ability == 2 then
-            local Magic1 = SoundService.Magic1:Clone()
-            Magic1.Parent = SoundService
-            Magic1:Play()
-            Debris:AddItem(Magic1, 1)
-            linearVelocityBall(player, player.Character, 5, ReplicatedStorage.Lightningsmall)
-        elseif Ability == 3 then
-            local health = SoundService["Undertale - Heal"]:Clone()
-            health.Parent = SoundService
-            health:Play()
-            Debris:AddItem(health, 1)
-            HealPlayer(player)
-            --linearVelocityBall(player, player.Character, 2)
-        elseif Ability == 4 then
-            local rockEffect = SoundService["Rock Impact 1 (SFX)"]:Clone()
-            rockEffect.Parent = SoundService
-            rockEffect:Play()
-            Debris:AddItem(rockEffect, 3)
-            WallAbility(player)
-        end 
+
+    if Ability == 1 and ability1Debounce == false then
+        ability1Debounce = true
+        local Gunshsot = SoundService["Blast Deflector 2 (SFX)"]:Clone()
+        Gunshsot.Parent = SoundService
+        Gunshsot:Play()
+        Debris:AddItem(Gunshsot, 1)
+
+        linearVelocityBall(player, player.Character, 2)
         local co = coroutine.create(AbilitiesCD)
         coroutine.resume(co, Ability, TextBoxCD)
         task.wait(abiityCD)
-        event_Debounce = false
-    end
+        task.wait(0.2)
+        ability1Debounce = false
+
+    elseif Ability == 2 and ability2Debounce == false then
+        ability2Debounce = true
+        local Magic1 = SoundService.Magic1:Clone()
+        Magic1.Parent = SoundService
+        Magic1:Play()
+        Debris:AddItem(Magic1, 1)
+
+        linearVelocityBall(player, player.Character, 5, ReplicatedStorage.Lightningsmall)
+        local co = coroutine.create(AbilitiesCD)
+        coroutine.resume(co, Ability, TextBoxCD)
+        task.wait(abiityCD)
+        task.wait(0.2)
+        ability2Debounce = false
+
+    elseif Ability == 3 and ability3Debounce == false then
+        ability3Debounce = true
+        local health = SoundService["Undertale - Heal"]:Clone()
+        health.Parent = SoundService
+        health:Play()
+        Debris:AddItem(health, 1)
+        HealPlayer(player)
+
+        local co = coroutine.create(AbilitiesCD)
+        coroutine.resume(co, Ability, TextBoxCD)
+        task.wait(abiityCD)
+        task.wait(1)
+        ability3Debounce = false
+        --linearVelocityBall(player, player.Character, 2)
+    elseif Ability == 4 and ability4Debounce == false then
+        ability4Debounce = true
+        local rockEffect = SoundService["Rock Impact 1 (SFX)"]:Clone()
+        rockEffect.Parent = SoundService
+        rockEffect:Play()
+        Debris:AddItem(rockEffect, 3)
+        WallAbility(player)
+
+        local co = coroutine.create(AbilitiesCD)
+        coroutine.resume(co, Ability, TextBoxCD)
+        task.wait(abiityCD)
+        task.wait(1.5)
+        ability4Debounce = false
+    end 
+    --[[local co = coroutine.create(AbilitiesCD)
+    coroutine.resume(co, Ability, TextBoxCD)
+    task.wait(abiityCD)
+    event_Debounce = false--]]
 end) 

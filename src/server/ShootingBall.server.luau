@@ -99,8 +99,8 @@ end
 -- Adding of speed and jumpheight to the players character.
 Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function(character)
-        character.Humanoid.WalkSpeed = 30
-        character.Humanoid.JumpHeight = 15
+        character.Humanoid.WalkSpeed = 22
+        character.Humanoid.JumpHeight = 8
     end)
 end)
 
@@ -114,6 +114,8 @@ local function WallAbility(player)
 
     -- Position the wall 8 studs in front of the player's head
     Wall.CFrame = head.CFrame * CFrame.new(0, 0, -12)
+    task.wait(0.5)
+    Wall.Anchored = true
 
     Wall.Touched:Connect(function(object)
         --[[if object.Name == "Ball_LV" or object.Name == "MassiveBall_LV" then
@@ -145,6 +147,7 @@ local function WallAbility(player)
             end
             if Wall.Health.Value <= 0 then
                 Wall.CanCollide = false
+                Wall.Anchored = false
             end
             local SoundSFX = SoundService["Shale Break 1 (SFX)"]:Clone()
             SoundSFX.Parent = SoundService
@@ -183,6 +186,7 @@ local function WallAbility(player)
             end
             if Wall.Health.Value <= 0 then
                 Wall.CanCollide = false
+                Wall.Anchored = false
             end
             local SoundSFX = SoundService["Rock Impact 22 (SFX)"]:Clone()
             SoundSFX.Parent = SoundService
@@ -265,7 +269,7 @@ local function linearVelocityBall(player, char, size, effect)
                     --ball.Material = Enum.Material.ForceField
                     return
                 elseif hit.Parent.name ~= char.name then
-                    Touched_Debounce = true
+                    --Touched_Debounce = true
 
                     if hit.Parent.Humanoid.Health == 50 then -- Checks if player has half hp to give shooter kill point - if their on 50hp that means the damage they're finna get dealt will kill them.
                         player.leaderstats.kills.Value += 1
@@ -289,7 +293,7 @@ local function linearVelocityBall(player, char, size, effect)
     local ballVelocity = ball.LinearVelocity
     ballVelocity.MaxForce = math.huge
     ball.CFrame = HumanoidRootPart.CFrame * CFrame.new(0, 1, -3)
-    ballVelocity.VectorVelocity = HumanoidRootPart.CFrame.LookVector * 100
+    ballVelocity.VectorVelocity = HumanoidRootPart.CFrame.LookVector * 200
     Debris:AddItem(ball, ttl)
 end
 

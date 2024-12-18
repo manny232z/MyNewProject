@@ -235,10 +235,11 @@ local function HealPlayer(player)
     HealPart.Touched:Connect(function(otherPart)
         if otherPart.Parent:IsA("Model") then
             local Humanoid = otherPart.Parent.Humanoid
-            for i = character.Humanoid.Health, 100, 7.5 do
+            Humanoid.Health = 100
+           --[[ for i = character.Humanoid.Health, 100, 7.5 do
                 task.wait(0.2)
                 Humanoid.Health = i
-            end
+            end--]]
         end
     end)
     task.wait(0.2)
@@ -297,7 +298,7 @@ local function linearVelocityBall(player, char, size, effect)
                 if hit.Parent.name ~= char.name then
                     --Touched_Debounce = true
                     
-                    if (hit.Parent.Humanoid.Health - 50) == 0 then -- Checks if player has half hp to give shooter kill point - if their on 50hp that means the damage they're finna get dealt will kill them.
+                    if (hit.Parent.Humanoid.Health - 50) <= 0 then -- Checks if player has half hp to give shooter kill point - if their on 50hp that means the damage they're finna get dealt will kill them.
                         player.leaderstats.kills.Value += 1
                         SoundService["strong sword slash"]:Play()
                     end
@@ -327,7 +328,6 @@ local function linearVelocityBall(player, char, size, effect)
     Debris:AddItem(ball, ttl)
 end
 
-local playerAbilityDebounces = {}  -- Table to store debounces for each player and ability
 
 ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, abiityCD, TextBoxCD)
 

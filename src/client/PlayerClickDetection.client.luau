@@ -8,7 +8,7 @@ local ability2Debounce = false
 local ability3Debounce = false
 local ability4Debounce = false
 
-player.CharacterAdded:Wait()
+--player.CharacterAdded:Wait()
 
 UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
     -- prevents player from shooting while dead

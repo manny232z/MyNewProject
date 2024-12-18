@@ -112,15 +112,22 @@ local function WallAbility(player)
     Wall.Parent = workspace
     Wall.CollisionGroup = "WallGroup"
     local character = player.Character
-    local head = character:WaitForChild("Head")
+    local head = character:WaitForChild("HumanoidRootPart")
 
     -- Position the wall 12 studs in front of the player's head
-    if player.Character.Humanoid.Jump == true then
-        Wall.CFrame = character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -12)
-        Wall.CFrame = Wall.CFrame * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0))
-    else
+    if player.Character.Humanoid.Jump then
+        -- When the player jumps, reset the wall's rotation and apply the position offset
+        Wall.CFrame = CFrame.Angles(0,0,0)
         Wall.CFrame = head.CFrame * CFrame.new(0, 0, -12)
+    else
+        -- When the player is not jumping, use the head's orientation and apply the position offset
+        Wall.CFrame = head.CFrame * CFrame.new(0, 0, -12) --* CFrame.Angles(0, head.CFrame:ToEulerAnglesYXZ())
     end
+    
+    --[[if Wall.CFrame.Rotation ~= CFrame.Angles(0,0,0) then
+        
+    end--]]
+    
     
     
     task.wait(0.1)
@@ -240,7 +247,7 @@ local function HealPlayer(player)
     task.wait(1)
     TweenService:Create(HealPart, tweeninfo, goals):Play() -- tween heal part to fully transparent
     Debris:AddItem(HealPart, 3)
-    task.wait(3)
+    task.wait(2)
     character.Humanoid.WalkSpeed = 22
     character.Humanoid.JumpHeight = 5
     character.Humanoid.AutoRotate = true

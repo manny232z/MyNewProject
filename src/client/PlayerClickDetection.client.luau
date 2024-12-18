@@ -37,8 +37,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
             elseif player.PlayerGui.ScreenGui.Abilities["Regen hp+"]:GetAttribute("Selected") == true and ability3Debounce == false then
                 ability3Debounce = true
                 ReplicatedStorage.RemoteEvent:FireServer(3, 5, Abilities.RegenHP_CD)
-                task.wait(5) -- ability Cooldown
-                task.wait(1)
+                task.wait(10) -- ability Cooldown
                 ability3Debounce = false
             elseif player.PlayerGui.ScreenGui.Abilities.Wall:GetAttribute("Selected") == true  and ability4Debounce == false then
                 ability4Debounce = true

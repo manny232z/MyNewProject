@@ -251,7 +251,7 @@ local function HealPlayer(player)
     character.Humanoid.WalkSpeed = 22
     character.Humanoid.JumpHeight = 5
     character.Humanoid.AutoRotate = true
-    --player.Character.Healing.Value = false
+    player.Character.Healing.Value = false
 end
 
 -- shooting ball function
@@ -352,7 +352,7 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
         coroutine.resume(co, Ability, TextBoxCD)
 
     elseif Ability == 3 then
-        --player.Character:WaitForChild("Healing").Value = true
+        player.Character:WaitForChild("Healing").Value = true
         local health = SoundService["Undertale - Heal"]:Clone()
         health.Parent = SoundService
         health:Play()

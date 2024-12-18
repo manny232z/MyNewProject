@@ -22,24 +22,24 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
         -- Only fire the event if the input was not processed by other UI elements
         if not gameProcessedEvent then
             print("Player clicked or tapped")
-            if player.PlayerGui.ScreenGui.Abilities.BlastPower:GetAttribute("Selected") == true and ability1Debounce == false then
+            if player.PlayerGui.ScreenGui.Abilities.BlastPower:GetAttribute("Selected") == true and ability1Debounce == false and player.Character.Healing.Value == false then
                 ability1Debounce =  true
                 ReplicatedStorage.RemoteEvent:FireServer(1, 0.3, Abilities.BlastPowerCD)
                 task.wait(0.3) -- ability Cool down
                 task.wait(0.2)
                  ability1Debounce = false
-            elseif player.PlayerGui.ScreenGui.Abilities["Massive Blast"]:GetAttribute("Selected") == true and ability2Debounce == false then
+            elseif player.PlayerGui.ScreenGui.Abilities["Massive Blast"]:GetAttribute("Selected") == true and ability2Debounce == false and player.Character.Healing.Value == false then
                 ability2Debounce = true
                 ReplicatedStorage.RemoteEvent:FireServer(2, 0.7, Abilities.MassiveBlastCD)
                 task.wait(0.7) -- ability Cooldown
                 task.wait(0.2)
                 ability2Debounce = false
-            elseif player.PlayerGui.ScreenGui.Abilities["Regen hp+"]:GetAttribute("Selected") == true and ability3Debounce == false then
+            elseif player.PlayerGui.ScreenGui.Abilities["Regen hp+"]:GetAttribute("Selected") == true and ability3Debounce == false  then
                 ability3Debounce = true
                 ReplicatedStorage.RemoteEvent:FireServer(3, 5, Abilities.RegenHP_CD)
                 task.wait(10) -- ability Cooldown
                 ability3Debounce = false
-            elseif player.PlayerGui.ScreenGui.Abilities.Wall:GetAttribute("Selected") == true  and ability4Debounce == false then
+            elseif player.PlayerGui.ScreenGui.Abilities.Wall:GetAttribute("Selected") == true  and ability4Debounce == false and player.Character.Healing.Value == false then
                 ability4Debounce = true
                 ReplicatedStorage.RemoteEvent:FireServer(4, 5, Abilities.WallCD)
                 task.wait(5) -- ability Cooldown

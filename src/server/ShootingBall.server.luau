@@ -100,7 +100,9 @@ end
 Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function(character)
         character.Humanoid.WalkSpeed = 22
-        character.Humanoid.JumpHeight = 0
+        character.Humanoid.JumpHeight = 5
+        local BoolValue = Instance.new("BoolValue", player.Character)
+        BoolValue.Name = "Healing"
     end)
 end)
 
@@ -112,10 +114,18 @@ local function WallAbility(player)
     local character = player.Character
     local head = character:WaitForChild("Head")
 
-    -- Position the wall 8 studs in front of the player's head
-    Wall.CFrame = head.CFrame * CFrame.new(0, 0, -12)
-    task.wait(0.5)
+    -- Position the wall 12 studs in front of the player's head
+    if player.Character.Humanoid.Jump == true then
+        Wall.CFrame = character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -12)
+        Wall.CFrame = Wall.CFrame * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0))
+    else
+        Wall.CFrame = head.CFrame * CFrame.new(0, 0, -12)
+    end
+    
+    
+    task.wait(0.1)
     Wall.Anchored = true
+
 
     Wall.Touched:Connect(function(object)
         --[[if object.Name == "Ball_LV" or object.Name == "MassiveBall_LV" then
@@ -132,7 +142,7 @@ local function WallAbility(player)
                 Wall.BillboardGui.Frame.HealthLabel.TextColor3 = Color3.new(1, 0.278431, 0.278431)
                 
             end
-            Wall.Health.Value -= 5
+            Wall.Health.Value -= 18
             for i, v in pairs(Wall:GetChildren()) do
                 if v.Name == "MinecraftBreakDecal" then
                     v.Transparency -= 0.1 / 2
@@ -171,7 +181,7 @@ local function WallAbility(player)
                 Wall.BillboardGui.Frame.HealthLabel.TextColor3 = Color3.new(1, 0.278431, 0.278431)
                 
             end
-            Wall.Health.Value -= 10
+            Wall.Health.Value -= 25
             for i, v in pairs(Wall:GetChildren()) do
                 if v.Name == "MinecraftBreakDecal" then
                     v.Transparency -= 0.1 
@@ -214,6 +224,7 @@ local function HealPlayer(player)
     local HealPart = ReplicatedStorage.HealPart:Clone()
     character.Humanoid.WalkSpeed = 0
     character.Humanoid.JumpHeight = 0
+    character.Humanoid.AutoRotate = false
     HealPart.Touched:Connect(function(otherPart)
         if otherPart.Parent:IsA("Model") then
             local Humanoid = otherPart.Parent.Humanoid
@@ -230,8 +241,10 @@ local function HealPlayer(player)
     TweenService:Create(HealPart, tweeninfo, goals):Play() -- tween heal part to fully transparent
     Debris:AddItem(HealPart, 3)
     task.wait(3)
-    character.Humanoid.WalkSpeed = 30
-   -- character.Humanoid.JumpHeight = 15
+    character.Humanoid.WalkSpeed = 22
+    character.Humanoid.JumpHeight = 5
+    character.Humanoid.AutoRotate = true
+    --player.Character.Healing.Value = false
 end
 
 -- shooting ball function
@@ -272,18 +285,21 @@ local function linearVelocityBall(player, char, size, effect)
     ball.Touched:Connect(function(hit)
         -- touched event for dmg on balls, and also debounce of 0.5 seconds so players won't die so fast.
         if hit.Parent:isA("Model") then
+            print("Hit "..hit.Parent.Name)
             if ball.Hit.Value == false then
                 if hit.Parent.name ~= char.name then
                     --Touched_Debounce = true
-                    ball.Hit.Value = true
-
-                    if hit.Parent.Humanoid.Health <= 50 then -- Checks if player has half hp to give shooter kill point - if their on 50hp that means the damage they're finna get dealt will kill them.
+                    
+                    if (hit.Parent.Humanoid.Health - 50) == 0 then -- Checks if player has half hp to give shooter kill point - if their on 50hp that means the damage they're finna get dealt will kill them.
                         player.leaderstats.kills.Value += 1
                         SoundService["strong sword slash"]:Play()
                     end
+                    if hit.Parent.Humanoid.Health > 0 then -- changes ball material to neon only if player is not dead already
+                        ball.Material = Enum.Material.Neon
+                    end
                     print("Touched enemy player / dmg inflicted")
-                    ball.Material = Enum.Material.Neon
-                    hit.Parent.Humanoid.Health -= 55
+                    hit.Parent.Humanoid.Health -= 50
+                    ball.Hit.Value = true
                 elseif hit.Parent.name == char.name then
                     print("touched player who shot / dmg ignored")
                     --ball.Material = Enum.Material.ForceField
@@ -306,54 +322,30 @@ end
 
 local playerAbilityDebounces = {}  -- Table to store debounces for each player and ability
 
-ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, abilityCD, TextBoxCD)
-    -- Initialize the player's debounce table if it doesn't exist yet
-    if not playerAbilityDebounces[player.UserId] then
-        playerAbilityDebounces[player.UserId] = {
-            ability1Debounce = false,
-            ability2Debounce = false,
-            ability3Debounce = false,
-            ability4Debounce = false
-        }
-    end
+ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, abiityCD, TextBoxCD)
 
-    -- Check and process the ability based on which ability was selected
-    local playerDebounces = playerAbilityDebounces[player.UserId]
-
-    if Ability == 1 and not playerDebounces.ability1Debounce then
-        playerDebounces.ability1Debounce = true
-        local Gunshot = SoundService["Blast Deflector 2 (SFX)"]:Clone()
-        Gunshot.Parent = SoundService
-        Gunshot:Play()
-        Debris:AddItem(Gunshot, 1)
+    if Ability == 1 then
+        local Gunshsot = SoundService["Blast Deflector 2 (SFX)"]:Clone()
+        Gunshsot.Parent = SoundService
+        Gunshsot:Play()
+        Debris:AddItem(Gunshsot, 1)
 
         linearVelocityBall(player, player.Character, 2)
-
         local co = coroutine.create(AbilitiesCD)
         coroutine.resume(co, Ability, TextBoxCD)
 
-        task.wait(abilityCD)
-        task.wait(0.2)
-        playerDebounces.ability1Debounce = false
-
-    elseif Ability == 2 and not playerDebounces.ability2Debounce then
-        playerDebounces.ability2Debounce = true
+    elseif Ability == 2 then
         local Magic1 = SoundService.Magic1:Clone()
         Magic1.Parent = SoundService
         Magic1:Play()
         Debris:AddItem(Magic1, 1)
 
         linearVelocityBall(player, player.Character, 5, ReplicatedStorage.Lightningsmall)
-
         local co = coroutine.create(AbilitiesCD)
         coroutine.resume(co, Ability, TextBoxCD)
 
-        task.wait(abilityCD)
-        task.wait(0.2)
-        playerDebounces.ability2Debounce = false
-
-    elseif Ability == 3 and not playerDebounces.ability3Debounce then
-        playerDebounces.ability3Debounce = true
+    elseif Ability == 3 then
+        --player.Character:WaitForChild("Healing").Value = true
         local health = SoundService["Undertale - Heal"]:Clone()
         health.Parent = SoundService
         health:Play()
@@ -363,12 +355,7 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
         local co = coroutine.create(AbilitiesCD)
         coroutine.resume(co, Ability, TextBoxCD)
 
-        task.wait(abilityCD)
-        task.wait(1)
-        playerDebounces.ability3Debounce = false
-
-    elseif Ability == 4 and not playerDebounces.ability4Debounce then
-        playerDebounces.ability4Debounce = true
+    elseif Ability == 4 then
         local rockEffect = SoundService["Rock Impact 1 (SFX)"]:Clone()
         rockEffect.Parent = SoundService
         rockEffect:Play()
@@ -377,9 +364,5 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
 
         local co = coroutine.create(AbilitiesCD)
         coroutine.resume(co, Ability, TextBoxCD)
-
-        task.wait(abilityCD)
-        task.wait(1.5)
-        playerDebounces.ability4Debounce = false
-    end
-end)
+    end 
+end) 

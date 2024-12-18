@@ -6,6 +6,6 @@ Players.PlayerAdded:Connect(function(player)
     leaderstats.Parent = player
 
     local kills = Instance.new("IntValue")
-    kills.Name = "kills"
+    kills.Name = "bloodlust"
     kills.Parent = leaderstats
 end)

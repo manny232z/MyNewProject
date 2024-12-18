@@ -103,8 +103,19 @@ Players.PlayerAdded:Connect(function(player)
         character.Humanoid.JumpHeight = 5
         local BoolValue = Instance.new("BoolValue", player.Character)
         BoolValue.Name = "Healing"
+        for i, v in pairs(workspace:GetChildren()) do
+            print(v.Name)
+            if v:isA("Model") then
+                if v:FindFirstChild("Dead") == nil then
+                    local BoolValue2 = Instance.new("BoolValue", v)
+                    BoolValue2.Name = "Dead"
+                end
+            end
+        end
     end)
 end)
+
+
 
 -- Wall ability
 local function WallAbility(player)
@@ -298,16 +309,22 @@ local function linearVelocityBall(player, char, size, effect)
                 if hit.Parent.name ~= char.name then
                     --Touched_Debounce = true
                     
-                    if (hit.Parent.Humanoid.Health - 50) <= 0 then -- Checks if player has half hp to give shooter kill point - if their on 50hp that means the damage they're finna get dealt will kill them.
-                        player.leaderstats.kills.Value += 1
+                    if (hit.Parent.Humanoid.Health - 55) <= 0 and hit.Parent.Dead.Value == false then -- Checks if player has half hp to give shooter kill point - if their on 50hp that means the damage they're finna get dealt will kill them.
+                        player.leaderstats.bloodlust.Value += 1
                         SoundService["strong sword slash"]:Play()
+                        hit.Parent.Dead.Value = true
+                        ReplicatedStorage.UltimateEvent:FireClient(player)
                     end
                     if hit.Parent.Humanoid.Health > 0 then -- changes ball material to neon only if player is not dead already
                         ball.Material = Enum.Material.Neon
                     end
                     print("Touched enemy player / dmg inflicted")
-                    hit.Parent.Humanoid.Health -= 50
+                    hit.Parent.Humanoid.Health -= 55
                     ball.Hit.Value = true
+                    if hit.Parent.Dead.Value == true then
+                        task.wait(4)
+                        hit.Parent.Dead.Value = false
+                    end
                 elseif hit.Parent.name == char.name then
                     print("touched player who shot / dmg ignored")
                     --ball.Material = Enum.Material.ForceField

@@ -101,6 +101,8 @@ Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function(character)
         character.Humanoid.WalkSpeed = 22
         character.Humanoid.JumpHeight = 5
+        local BoolValue3 = Instance.new("BoolValue", player.character)
+        BoolValue3.Name = "UltimateActivated"
         local BoolValue = Instance.new("BoolValue", player.Character)
         BoolValue.Name = "Healing"
         for i, v in pairs(workspace:GetChildren()) do

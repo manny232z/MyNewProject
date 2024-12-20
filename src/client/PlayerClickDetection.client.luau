@@ -114,6 +114,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
                 wall.BorderColor3 = Color3.fromHex("#aa0000")
 
                 SoundService["Power Outage"]:Play()
+                
                 TweenService:Create(blastpower, tweeninfo, {TextTransparency = 1}):Play()
                 TweenService:Create(massiveblast, tweeninfo, {TextTransparency = 1}):Play()
                 TweenService:Create(regenhp, tweeninfo, {TextTransparency = 1}):Play()
@@ -127,15 +128,16 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
                 TweenService:Create(massiveblast, tweeninfo, {TextTransparency = 0}):Play()
                 TweenService:Create(regenhp, tweeninfo, {TextTransparency = 0}):Play()
                 TweenService:Create(wall, tweeninfo, {TextTransparency = 0}):Play()
+                ReplicatedStorage.GivAuraEvent:FireServer(1)
                 
                 --TweenService:Create(progessbar, tweeninfo, {Size = UDim2.new(0, 0, 1, 0)}):Play()
                 
-                task.wait(1)
-                ReplicatedStorage.GivAuraEvent:FireServer(1)
+                
                 for i = 60, 0, -1 do
-                    task.wait(1)
+                    
                     player.PlayerGui.ScreenGui.Ultimate.TextButton.Text = "("..i..")"
                     TweenService:Create(progessbar, tweeninfo, {Size = UDim2.new(i / 60, 0, 1, 0)}):Play()
+                    task.wait(1)
                     if i == 0 then
                         SoundService["Power Outage"]:Play()
                         TweenService:Create(screengui.Ultimate.TextButton, tweeninfo, {TextTransparency = 1}):Play()
@@ -159,6 +161,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
                         regenhp.BorderColor3 = Color3.fromHex("#000000")
                         wall.BorderColor3 = Color3.fromHex("#000000")
                         ReplicatedStorage.GivAuraEvent:FireServer(2)
+                        
                     end
                 end
             end

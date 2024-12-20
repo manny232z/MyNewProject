@@ -30,6 +30,8 @@ local goals = {
     Transparency = 1
 }
 
+
+
 -- Function for ability cooldown text 
 local function AbilitiesCD(Ability, TextBoxCD)
     if Ability == 1 then
@@ -86,6 +88,10 @@ Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function(character)
         character.Humanoid.WalkSpeed = 22
         character.Humanoid.JumpHeight = 5
+        local bloodlust = Instance.new("IntValue", player.character)
+        bloodlust.Name = "bloodlust"
+        local num = Instance.new("NumberValue", player.character)
+        num.Name = "num"
         local BoolValue3 = Instance.new("BoolValue", player.character)
         BoolValue3.Name = "UltimateActivated"
         local BoolValue = Instance.new("BoolValue", player.Character)
@@ -253,15 +259,19 @@ local function HealPlayer(player)
 end
 
 -- shooting ball function
-local function linearVelocityBall(player, char, size, effect)
-    ball_lv.CollisionGroup = "BallGroup"
-    local ball = ball_lv:Clone()
+local function linearVelocityBall(player, char, size, effect, UltimateActive)
+    local ball = nil
+    if UltimateActive == true then
+        ball = ReplicatedStorage.Ball_LV2:Clone()
+    elseif UltimateActive == false then
+        ball = ReplicatedStorage.Ball_LV:Clone()
+    end
     if effect ~= nil then
         local newEffect = effect:Clone()
         newEffect.Parent = ball 
     end
     ball.Size = Vector3.new(size,size,size)
-    if size == 5 then
+    if size == 5 and UltimateActive == false then
         ball.Name = "MassiveBall_LV"
     end
     if player:HasTag("RedTeam") then -- Changes ball color depending on which team the player chose
@@ -299,7 +309,13 @@ local function linearVelocityBall(player, char, size, effect)
                         player.leaderstats.bloodlust.Value += 1
                         SoundService["strong sword slash"]:Play()
                         hit.Parent.Dead.Value = true
-                        ReplicatedStorage.UltimateEvent:FireClient(player)
+                        local bloodlust = player.Character.bloodlust 
+                        local num = player.Character.num
+                        bloodlust.Value += 1
+                        if num.Value ~= 1 then
+                            num.Value += 0.2
+                        end
+                        ReplicatedStorage.UltimateEvent:FireClient(player, num, bloodlust)
                     end
                     if hit.Parent.Humanoid.Health > 0 then -- changes ball material to neon only if player is not dead already
                         ball.Material = Enum.Material.Neon
@@ -341,12 +357,19 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
             Gunshsot:Play()
             Debris:AddItem(Gunshsot, 1)
     
-            linearVelocityBall(player, player.Character, 2)
+            linearVelocityBall(player, player.Character, 2, nil, UltimateActive)
             local co = coroutine.create(AbilitiesCD)
             coroutine.resume(co, Ability, TextBoxCD)
 
         elseif UltimateActive == true then
-            
+            local Gunshsot = SoundService["Blast Deflector 2 (SFX)"]:Clone()
+            Gunshsot.Parent = SoundService
+            Gunshsot:Play()
+            Debris:AddItem(Gunshsot, 1)
+    
+            linearVelocityBall(player, player.Character, 4, nil, UltimateActive)
+            local co = coroutine.create(AbilitiesCD)
+            coroutine.resume(co, Ability, TextBoxCD)
             print("Shot Ultimate ability 1")
         end
     elseif Ability == 2 then
@@ -356,11 +379,19 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
             Magic1:Play()
             Debris:AddItem(Magic1, 1)
     
-            linearVelocityBall(player, player.Character, 5, ReplicatedStorage.Lightningsmall)
+            linearVelocityBall(player, player.Character, 5, ReplicatedStorage.Lightningsmall, UltimateActive)
             local co = coroutine.create(AbilitiesCD)
             coroutine.resume(co, Ability, TextBoxCD)
 
         elseif UltimateActive == true then
+            local Magic1 = SoundService.Magic1:Clone()
+            Magic1.Parent = SoundService
+            Magic1:Play()
+            Debris:AddItem(Magic1, 1)
+    
+            linearVelocityBall(player, player.Character, 5, nil, UltimateActive)
+            local co = coroutine.create(AbilitiesCD)
+            coroutine.resume(co, Ability, TextBoxCD)
             print("Shot Ultimate ability 2")
         end
     elseif Ability == 3 then

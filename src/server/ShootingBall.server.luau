@@ -17,21 +17,6 @@ local ability4Debounce = false
 local wallTouched_Debouce = false
 local wallTouched_Debouce2 = false
 
---[[
--- Create collision groups if they don't already exist
-if not pcall(function() PhysicsService:RegisterCollisionGroup("BallGroup") end) then
-    print("PartGroup already exists.")
-end
-if not pcall(function() PhysicsService:RegisterCollisionGroup("WallGroup") end) then
-    print("WallGroup already exists.")
-end
-
--- Set collision rules
-PhysicsService:CollisionGroupSetCollidable("BallGroup", "WallGroup", true)  -- Part can collide with Wall
-PhysicsService:CollisionGroupSetCollidable("BallGroup", "Default", false)  -- Part can't collide with anything else
-PhysicsService:CollisionGroupSetCollidable("WallGroup", "Default", true)  -- Wall can collide with everything
---]]
-
 local tweeninfo = TweenInfo.new(
     2,
     Enum.EasingStyle.Quad,
@@ -141,8 +126,7 @@ local function WallAbility(player)
         
     end--]]
     
-    
-    
+       
     task.wait(0.1)
     Wall.Anchored = true
 
@@ -348,30 +332,40 @@ local function linearVelocityBall(player, char, size, effect)
 end
 
 
-ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, abiityCD, TextBoxCD)
+ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, abiityCD, TextBoxCD, UltimateActive)
 
     if Ability == 1 then
-        local Gunshsot = SoundService["Blast Deflector 2 (SFX)"]:Clone()
-        Gunshsot.Parent = SoundService
-        Gunshsot:Play()
-        Debris:AddItem(Gunshsot, 1)
+        if UltimateActive == false then
+            local Gunshsot = SoundService["Blast Deflector 2 (SFX)"]:Clone()
+            Gunshsot.Parent = SoundService
+            Gunshsot:Play()
+            Debris:AddItem(Gunshsot, 1)
+    
+            linearVelocityBall(player, player.Character, 2)
+            local co = coroutine.create(AbilitiesCD)
+            coroutine.resume(co, Ability, TextBoxCD)
 
-        linearVelocityBall(player, player.Character, 2)
-        local co = coroutine.create(AbilitiesCD)
-        coroutine.resume(co, Ability, TextBoxCD)
-
+        elseif UltimateActive == true then
+            
+            print("Shot Ultimate ability 1")
+        end
     elseif Ability == 2 then
-        local Magic1 = SoundService.Magic1:Clone()
-        Magic1.Parent = SoundService
-        Magic1:Play()
-        Debris:AddItem(Magic1, 1)
+        if UltimateActive == false then
+            local Magic1 = SoundService.Magic1:Clone()
+            Magic1.Parent = SoundService
+            Magic1:Play()
+            Debris:AddItem(Magic1, 1)
+    
+            linearVelocityBall(player, player.Character, 5, ReplicatedStorage.Lightningsmall)
+            local co = coroutine.create(AbilitiesCD)
+            coroutine.resume(co, Ability, TextBoxCD)
 
-        linearVelocityBall(player, player.Character, 5, ReplicatedStorage.Lightningsmall)
-        local co = coroutine.create(AbilitiesCD)
-        coroutine.resume(co, Ability, TextBoxCD)
-
+        elseif UltimateActive == true then
+            print("Shot Ultimate ability 2")
+        end
     elseif Ability == 3 then
-        player.Character:WaitForChild("Healing").Value = true
+        if UltimateActive == false then
+            player.Character:WaitForChild("Healing").Value = true
         local health = SoundService["Undertale - Heal"]:Clone()
         health.Parent = SoundService
         health:Play()
@@ -381,8 +375,12 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
         local co = coroutine.create(AbilitiesCD)
         coroutine.resume(co, Ability, TextBoxCD)
 
+        elseif UltimateActive == true then
+            print("Shot Ultimate ability 3")
+        end
     elseif Ability == 4 then
-        local rockEffect = SoundService["Rock Impact 1 (SFX)"]:Clone()
+        if UltimateActive == false then
+            local rockEffect = SoundService["Rock Impact 1 (SFX)"]:Clone()
         rockEffect.Parent = SoundService
         rockEffect:Play()
         Debris:AddItem(rockEffect, 3)
@@ -390,5 +388,9 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
 
         local co = coroutine.create(AbilitiesCD)
         coroutine.resume(co, Ability, TextBoxCD)
+
+        elseif UltimateActive == true then
+            print("Shot Ultimate ability 4")
+        end
     end 
 end) 

@@ -146,6 +146,7 @@ local function WallAbility(player)
         else
             print("No LinearVelocity found")
         end
+        
         if object.Name == "Ball_LV" and wallTouched_Debouce == false then
             wallTouched_Debouce = true
             if Wall.Health.Value <= 60 then
@@ -298,6 +299,9 @@ local function linearVelocityBall(player, char, size, effect, UltimateActive)
     
     ball.Parent = workspace
     ball.Touched:Connect(function(hit)
+        if hit.Name == "HealPart" then
+            hit.BrickColor = BrickColor.new("Really red")
+        end
         -- touched event for dmg on balls, and also debounce of 0.5 seconds so players won't die so fast.
         if hit.Parent:isA("Model") then
             print("Hit "..hit.Parent.Name)
@@ -315,7 +319,12 @@ local function linearVelocityBall(player, char, size, effect, UltimateActive)
                         if num.Value ~= 1 then
                             num.Value += 0.2
                         end
-                        ReplicatedStorage.UltimateEvent:FireClient(player, num, bloodlust)
+                        if player.Character.UltimateActivated.Value == false then
+                            print("ULTIMATE PROGRESS BAR EVENT HAPPENED")
+                            ReplicatedStorage.UltimateEvent:FireClient(player, num, bloodlust)
+                        else
+                            warn("Something went wrong")
+                        end
                     end
                     if hit.Parent.Humanoid.Health > 0 then -- changes ball material to neon only if player is not dead already
                         ball.Material = Enum.Material.Neon
@@ -362,10 +371,10 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
             coroutine.resume(co, Ability, TextBoxCD)
 
         elseif UltimateActive == true then
-            local Gunshsot = SoundService["Blast Deflector 2 (SFX)"]:Clone()
-            Gunshsot.Parent = SoundService
-            Gunshsot:Play()
-            Debris:AddItem(Gunshsot, 1)
+            local soundsfx = SoundService["Antiproton-Delphic Pistol Blast"]:Clone()
+            soundsfx.Parent = SoundService
+            soundsfx:Play()
+            Debris:AddItem(soundsfx, 1)
     
             linearVelocityBall(player, player.Character, 4, nil, UltimateActive)
             local co = coroutine.create(AbilitiesCD)

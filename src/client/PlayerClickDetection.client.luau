@@ -61,7 +61,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
                 if player.Character.UltimateActivated.Value == true then
                     ability2Debounce = true
                     print(player.Name.." Clicked EnormousBlast ability")
-                    ReplicatedStorage.RemoteEvent:FireServer(2, 0.7, Abilities.MassiveBlastCD, true)
+                    ReplicatedStorage.RemoteEvent:FireServer(2, 2, Abilities.MassiveBlastCD, true)
                     task.wait(2) -- ability Cooldown
                     task.wait(1.5)
                     ability2Debounce = false

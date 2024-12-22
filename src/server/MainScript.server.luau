@@ -140,7 +140,7 @@ local function WallAbility(player)
         Wall.sparkle.Enabled = true
         Wall.swirl.Enabled = true
     else
-        warn("SOMETHING HAPPENED WITH GIANT WALL ABILITY")
+        print("NOT IN ULTIMATE FOR ULTIMATE WALL")
     end
 
     -- Position the wall 12 studs in front of the player's head
@@ -163,117 +163,130 @@ local function WallAbility(player)
 
 
     Wall.Touched:Connect(function(object)
-        --[[if object.Name == "Ball_LV" or object.Name == "MassiveBall_LV" then
-            object:Destroy()
-        end--]]
+        -- Handle LinearVelocity destruction
         if object:FindFirstChild("LinearVelocity") then
             object.LinearVelocity:Destroy()
         else
             print("No LinearVelocity found")
         end
-        
-        if object.Name == "Ball_LV" or object.Name == "Ball_LV2" and wallTouched_Debouce == false then
+    
+        -- First condition block for "Ball_LV" or "Ball_LV2"
+        if (object.Name == "Ball_LV" or object.Name == "Ball_LV2") and wallTouched_Debouce == false then
             wallTouched_Debouce = true
+    
+            -- Wall damage logic for first case
             if Wall.Health.Value <= 60 then
                 Wall.BillboardGui.Frame.HealthLabel.TextColor3 = Color3.new(1, 0.278431, 0.278431)
-                
             end
+    
             if player.Character.UltimateActivated.Value == true then
-                Wall.Health.Value -= 30
+                Wall.Health.Value -= 20 -- Damage if Ultimate is active
             elseif player.Character.UltimateActivated.Value == false then
-                Wall.Health.Value -= 18
-            end
-            for i, v in pairs(Wall:GetChildren()) do
-                if v.Name == "MinecraftBreakDecal" then
-                    v.Transparency -= 0.1
-                end
-            end
-            local WallHP = Wall.Health.Value
-            print("Wall hp is "..WallHP.."%")
-            if Wall.Health.Value > -5 then
-                Wall.BillboardGui.Frame.HealthLabel.Text = WallHP.."%"
+                Wall.Health.Value -= 18  -- Normal damage
             else
-                Wall.BillboardGui.Frame.HealthLabel.Text = "0%"
+                warn("DAMAGE DIDN'T HAPPEN - POTENTIAL ERROR")
             end
-            if Wall.Health.Value <= 0 then
-                Wall.CanCollide = false
-                Wall.Anchored = false
-            end
-            local SoundSFX
-            if player.Character.UltimateActivated.Value == false then
-                SoundSFX = SoundService["Shale Break 1 (SFX)"]:Clone()
-                SoundSFX.Parent = SoundService
-            elseif player.Character.UltimateActivated.Value == true then
-                SoundSFX = SoundService["Starbound Tank Shot (Semi-Distorted)"]:Clone()
-                SoundSFX.Parent = SoundService
-            end
-            if not SoundSFX.Playing then
-                SoundSFX:Play()
-            end
-            task.wait(0.3)
-            --object:Destroy()
-            if object:FindFirstChild("LinearVelocity") then
-                object.LinearVelocity:Destroy()
-            else
-                print("No LinearVelocity found")
-            end
-            Debris:AddItem(SoundSFX, 4)
-            task.wait(0.2)
-            wallTouched_Debouce = false
-
-        elseif object.Name == "MassiveBall_LV" or object.Name == "Ball_LV3" and wallTouched_Debouce2 == false then
-            wallTouched_Debouce2 = true
-            if Wall.Health.Value <= 60 then
-                Wall.BillboardGui.Frame.HealthLabel.TextColor3 = Color3.new(1, 0.278431, 0.278431)
-                
-            end
-
-            if player.Character.UltimateActivated.Value == true then
-                Wall.Health.Value -= 50
-            elseif player.Character.UltimateActivated.Value == false then
-                Wall.Health.Value -= 25
-            end
-
+    
+            -- Handle MinecraftBreakDecal transparency
             for i, v in pairs(Wall:GetChildren()) do
                 if v.Name == "MinecraftBreakDecal" then
                     v.Transparency -= 0.2
                 end
             end
+    
+            -- Update wall health text
             local WallHP = Wall.Health.Value
             print("Wall hp is "..WallHP.."%")
-            if Wall.Health.Value > -5 then
+            if Wall.Health.Value > 0 then
                 Wall.BillboardGui.Frame.HealthLabel.Text = WallHP.."%"
             else
                 Wall.BillboardGui.Frame.HealthLabel.Text = "0%"
             end
+    
+            -- If health reaches 0, disable collision and anchoring
             if Wall.Health.Value <= 0 then
                 Wall.CanCollide = false
                 Wall.Anchored = false
             end
+    
+            -- Sound logic for the first condition
             local SoundSFX
             if player.Character.UltimateActivated.Value == false then
-                local SoundSFX = SoundService["Rock Impact 22 (SFX)"]:Clone()
-                SoundSFX.Parent = SoundService
+                SoundSFX = SoundService["Shale Break 1 (SFX)"]:Clone()
             elseif player.Character.UltimateActivated.Value == true then
                 SoundSFX = SoundService["Starbound Tank Shot (Semi-Distorted)"]:Clone()
-                SoundSFX.Parent = SoundService
             end
-           
+            SoundSFX.Parent = SoundService
             if not SoundSFX.Playing then
                 SoundSFX:Play()
             end
+    
+            -- Wait and reset debounce
             task.wait(0.3)
-            --object:Destroy()
-            if object:FindFirstChild("LinearVelocity") then
-                object.LinearVelocity:Destroy()
-            else
-                print("No LinearVelocity found")
+            Debris:AddItem(SoundSFX, 4)
+            task.wait(0.2)
+            wallTouched_Debouce = false
+    
+        -- Second condition block for "MassiveBall_LV" or "Ball_LV3"
+        elseif (object.Name == "MassiveBall_LV" or object.Name == "Ball_LV3") and wallTouched_Debouce2 == false then
+            wallTouched_Debouce2 = true
+    
+            -- Wall damage logic for the second case
+            if Wall.Health.Value <= 60 then
+                Wall.BillboardGui.Frame.HealthLabel.TextColor3 = Color3.new(1, 0.278431, 0.278431)
             end
+    
+            if player.Character.UltimateActivated.Value == true then
+                Wall.Health.Value -= 50  -- Damage if Ultimate is active
+            elseif player.Character.UltimateActivated.Value == false then
+                Wall.Health.Value -= 25  -- Normal damage
+            else
+                warn("DAMAGE DIDN'T HAPPEN - POTENTIAL ERROR")
+            end
+    
+            -- Handle MinecraftBreakDecal transparency
+            for i, v in pairs(Wall:GetChildren()) do
+                if v.Name == "MinecraftBreakDecal" then
+                    v.Transparency -= 0.2
+                end
+            end
+    
+            -- Update wall health text
+            local WallHP = Wall.Health.Value
+            print("Wall hp is "..WallHP.."%")
+            if Wall.Health.Value > 0 then
+                Wall.BillboardGui.Frame.HealthLabel.Text = WallHP.."%"
+            else
+                Wall.BillboardGui.Frame.HealthLabel.Text = "0%"
+            end
+    
+            -- If health reaches 0, disable collision and anchoring
+            if Wall.Health.Value <= 0 then
+                Wall.CanCollide = false
+                Wall.Anchored = false
+            end
+    
+            -- Sound logic for the second condition
+            local SoundSFX
+            if player.Character.UltimateActivated.Value == false then
+                SoundSFX = SoundService["Rock Impact 22 (SFX)"]:Clone()
+            elseif player.Character.UltimateActivated.Value == true then
+                SoundSFX = SoundService["Starbound Tank Shot (Semi-Distorted)"]:Clone()
+            end
+            SoundSFX.Parent = SoundService
+            if SoundSFX and not SoundSFX.Playing then
+                SoundSFX:Play()
+            else
+                warn("SOUNDSFX NOT LOADED")
+            end
+    
+            -- Wait and reset debounce
+            task.wait(0.3)
             Debris:AddItem(SoundSFX, 5)
             task.wait(0.2)
             wallTouched_Debouce2 = false
         end
-    end)
+    end)    
 end
 
 
@@ -366,49 +379,56 @@ local function linearVelocityBall(player, char, size, effect, UltimateActive, ab
             hit.BrickColor = BrickColor.new("Really red")
         end
         -- touched event for dmg on balls, and also debounce of 0.5 seconds so players won't die so fast.
-        if hit.Parent:isA("Model") == true then
+        if hit.Parent:IsA("Model") then
             print("Hit "..hit.Parent.Name)
-            if ball.Hit.Value == false then
-                if hit.Parent.name ~= char.name then
-                    --Touched_Debounce = true
-                    
-                    if (hit.Parent.Humanoid.Health - 55) <= 0 and hit.Parent.Dead.Value == false then -- Checks if player has half hp to give shooter kill point - if their on 50hp that means the damage they're finna get dealt will kill them.
-                        player.leaderstats.bloodlust.Value += 1
-                        SoundService["strong sword slash"]:Play()
-                        hit.Parent.Dead.Value = true
-                        local bloodlust = player.Character.bloodlust 
-                        local num = player.Character.num
-                        bloodlust.Value += 1
-                        if num.Value ~= 1 then
-                            num.Value += 0.2
+            
+            -- Check if the parent has a Humanoid
+            local humanoid = hit.Parent:FindFirstChild("Humanoid")
+            if humanoid then
+                if ball.Hit.Value == false then
+                    if hit.Parent.Name ~= char.Name then
+                        -- Touched_Debounce = true
+                        if (humanoid.Health - 55) <= 0 and hit.Parent.Dead.Value == false then
+                            player.leaderstats.bloodlust.Value += 1
+                            SoundService["strong sword slash"]:Play()
+                            hit.Parent.Dead.Value = true
+                            local bloodlust = player.Character.bloodlust 
+                            local num = player.Character.num
+                            bloodlust.Value += 1
+                            if num.Value ~= 1 then
+                                num.Value += 0.2
+                            end
+                            if player.Character.UltimateActivated.Value == false then
+                                print("ULTIMATE PROGRESS BAR EVENT HAPPENED")
+                                ReplicatedStorage.UltimateEvent:FireClient(player, num, bloodlust)
+                            else
+                                warn("Something went wrong")
+                            end
                         end
-                        if player.Character.UltimateActivated.Value == false then
-                            print("ULTIMATE PROGRESS BAR EVENT HAPPENED")
-                            ReplicatedStorage.UltimateEvent:FireClient(player, num, bloodlust)
-                        else
-                            warn("Something went wrong")
+                        if humanoid.Health > 0 then
+                            ball.Material = Enum.Material.Neon
                         end
+                        print("Touched enemy player / dmg inflicted")
+                        humanoid.Health -= 55
+                        ball.Hit.Value = true
+                        if hit.Parent.Dead.Value == true then
+                            task.wait(4)
+                            hit.Parent.Dead.Value = false
+                        end
+                    elseif hit.Parent.Name == char.Name then
+                        print("Touched player who shot / dmg ignored")
+                        -- ball.Material = Enum.Material.ForceField
+                        return
                     end
-                    if hit.Parent.Humanoid.Health > 0 then -- changes ball material to neon only if player is not dead already
-                        ball.Material = Enum.Material.Neon
-                    end
-                    print("Touched enemy player / dmg inflicted")
-                    hit.Parent.Humanoid.Health -= 55
-                    ball.Hit.Value = true
-                    if hit.Parent.Dead.Value == true then
-                        task.wait(4)
-                        hit.Parent.Dead.Value = false
-                    end
-                elseif hit.Parent.name == char.name then
-                    print("touched player who shot / dmg ignored")
-                    --ball.Material = Enum.Material.ForceField
-                    return
+                else
+                    print("Dmg debounce")
                 end
             else
-                print("Dmg debounce")
+                print("No Humanoid found in " .. hit.Parent.Name)
             end
         end
     end)
+    
 
     -- Positioning of ball in front of the player and adding of velocity to the ball.
     local HumanoidRootPart = char:WaitForChild("HumanoidRootPart")

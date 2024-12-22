@@ -33,7 +33,7 @@ local goals = {
 
 
 -- Function for ability cooldown text 
-local function AbilitiesCD(Ability, TextBoxCD)
+local function AbilitiesCD(Ability, TextBoxCD, player)
     if Ability == 1 then
         TextBoxCD.BackgroundTransparency = 0.5
         print(TextBoxCD)
@@ -47,15 +47,27 @@ local function AbilitiesCD(Ability, TextBoxCD)
     end
 
     if Ability == 2 then
-        TextBoxCD.BackgroundTransparency = 0.5
-        print(TextBoxCD)
-        for i = 0.7, 0, -0.1 do
-            TextBoxCD.Text = string.format("%.1f", i)  -- Ensure it displays one decimal place
-            print(i)
-            task.wait(0.1)  -- Wait for 0.1 seconds before the next iteration
+        if player.Character.UltimateActivated.Value == true then
+            TextBoxCD.BackgroundTransparency = 0.5
+            print(TextBoxCD)
+            for i = 2, 0, -1 do
+                TextBoxCD.Text = i -- Ensure it displays one decimal place
+                print(i)
+                task.wait(1)  -- Wait for 0.1 seconds before the next iteration
+            end
+            TextBoxCD.BackgroundTransparency = 1
+            TextBoxCD.Text = ""  -- Clear the text after the countdown ends
+        elseif player.Character.UltimateActivated.Value == false then
+            TextBoxCD.BackgroundTransparency = 0.5
+            print(TextBoxCD)
+            for i = 0.7, 0, -0.1 do
+                TextBoxCD.Text = string.format("%.1f", i)  -- Ensure it displays one decimal place
+                print(i)
+                task.wait(0.1)  -- Wait for 0.1 seconds before the next iteration
+            end
+            TextBoxCD.BackgroundTransparency = 1
+            TextBoxCD.Text = ""  -- Clear the text after the countdown ends
         end
-        TextBoxCD.BackgroundTransparency = 1
-        TextBoxCD.Text = ""  -- Clear the text after the countdown ends
     end  
 
     if Ability == 3 then
@@ -117,6 +129,19 @@ local function WallAbility(player)
     Wall.CollisionGroup = "WallGroup"
     local character = player.Character
     local head = character:WaitForChild("HumanoidRootPart")
+    if player.Character.UltimateActivated.Value == true then
+        print("ULTIMATE WALL ABILITY")
+        Wall.Material = Enum.Material.Neon
+        Wall.BrickColor = BrickColor.new("Royal purple")
+        Wall.Size = Vector3.new(70, 28.997, 2)
+        Wall.BillboardGui.Frame.HealthLabel.Text = "200%"
+        Wall.BillboardGui.Frame.HealthLabel.TextColor3 = Color3.fromHex("#aa557f")
+        Wall.Health.Value = 200
+        Wall.sparkle.Enabled = true
+        Wall.swirl.Enabled = true
+    else
+        warn("SOMETHING HAPPENED WITH GIANT WALL ABILITY")
+    end
 
     -- Position the wall 12 studs in front of the player's head
     if player.Character.Humanoid.Jump then
@@ -147,16 +172,20 @@ local function WallAbility(player)
             print("No LinearVelocity found")
         end
         
-        if object.Name == "Ball_LV" and wallTouched_Debouce == false then
+        if object.Name == "Ball_LV" or object.Name == "Ball_LV2" and wallTouched_Debouce == false then
             wallTouched_Debouce = true
             if Wall.Health.Value <= 60 then
                 Wall.BillboardGui.Frame.HealthLabel.TextColor3 = Color3.new(1, 0.278431, 0.278431)
                 
             end
-            Wall.Health.Value -= 18
+            if player.Character.UltimateActivated.Value == true then
+                Wall.Health.Value -= 30
+            elseif player.Character.UltimateActivated.Value == false then
+                Wall.Health.Value -= 18
+            end
             for i, v in pairs(Wall:GetChildren()) do
                 if v.Name == "MinecraftBreakDecal" then
-                    v.Transparency -= 0.1 / 2
+                    v.Transparency -= 0.1
                 end
             end
             local WallHP = Wall.Health.Value
@@ -170,8 +199,14 @@ local function WallAbility(player)
                 Wall.CanCollide = false
                 Wall.Anchored = false
             end
-            local SoundSFX = SoundService["Shale Break 1 (SFX)"]:Clone()
-            SoundSFX.Parent = SoundService
+            local SoundSFX
+            if player.Character.UltimateActivated.Value == false then
+                SoundSFX = SoundService["Shale Break 1 (SFX)"]:Clone()
+                SoundSFX.Parent = SoundService
+            elseif player.Character.UltimateActivated.Value == true then
+                SoundSFX = SoundService["Starbound Tank Shot (Semi-Distorted)"]:Clone()
+                SoundSFX.Parent = SoundService
+            end
             if not SoundSFX.Playing then
                 SoundSFX:Play()
             end
@@ -182,20 +217,26 @@ local function WallAbility(player)
             else
                 print("No LinearVelocity found")
             end
-            Debris:AddItem(SoundSFX, 2)
+            Debris:AddItem(SoundSFX, 4)
             task.wait(0.2)
             wallTouched_Debouce = false
 
-        elseif object.Name == "MassiveBall_LV" and wallTouched_Debouce2 == false then
+        elseif object.Name == "MassiveBall_LV" or object.Name == "Ball_LV3" and wallTouched_Debouce2 == false then
             wallTouched_Debouce2 = true
             if Wall.Health.Value <= 60 then
                 Wall.BillboardGui.Frame.HealthLabel.TextColor3 = Color3.new(1, 0.278431, 0.278431)
                 
             end
-            Wall.Health.Value -= 25
+
+            if player.Character.UltimateActivated.Value == true then
+                Wall.Health.Value -= 50
+            elseif player.Character.UltimateActivated.Value == false then
+                Wall.Health.Value -= 25
+            end
+
             for i, v in pairs(Wall:GetChildren()) do
                 if v.Name == "MinecraftBreakDecal" then
-                    v.Transparency -= 0.1 
+                    v.Transparency -= 0.2
                 end
             end
             local WallHP = Wall.Health.Value
@@ -209,8 +250,15 @@ local function WallAbility(player)
                 Wall.CanCollide = false
                 Wall.Anchored = false
             end
-            local SoundSFX = SoundService["Rock Impact 22 (SFX)"]:Clone()
-            SoundSFX.Parent = SoundService
+            local SoundSFX
+            if player.Character.UltimateActivated.Value == false then
+                local SoundSFX = SoundService["Rock Impact 22 (SFX)"]:Clone()
+                SoundSFX.Parent = SoundService
+            elseif player.Character.UltimateActivated.Value == true then
+                SoundSFX = SoundService["Starbound Tank Shot (Semi-Distorted)"]:Clone()
+                SoundSFX.Parent = SoundService
+            end
+           
             if not SoundSFX.Playing then
                 SoundSFX:Play()
             end
@@ -221,13 +269,19 @@ local function WallAbility(player)
             else
                 print("No LinearVelocity found")
             end
-            Debris:AddItem(SoundSFX, 2)
+            Debris:AddItem(SoundSFX, 5)
             task.wait(0.2)
             wallTouched_Debouce2 = false
         end
     end)
 end
 
+
+local function UltimateAbility4(player)
+    local highlight = Instance.new("Highlight", player.Character)
+    highlight.FillColor = Color3.new(0.878431, 0.250980, 0.901960)
+    highlight.OutlineColor = Color3.new(0.878431, 0.235294, 0.235294)
+end
 
 -- heal player function
 local function HealPlayer(player)
@@ -260,10 +314,14 @@ local function HealPlayer(player)
 end
 
 -- shooting ball function
-local function linearVelocityBall(player, char, size, effect, UltimateActive)
+local function linearVelocityBall(player, char, size, effect, UltimateActive, abilityType)
     local ball = nil
     if UltimateActive == true then
-        ball = ReplicatedStorage.Ball_LV2:Clone()
+        if abilityType == "EnormousBlast" then
+            ball = ReplicatedStorage.Ball_LV3:Clone()
+        else
+            ball = ReplicatedStorage.Ball_LV2:Clone()
+        end
     elseif UltimateActive == false then
         ball = ReplicatedStorage.Ball_LV:Clone()
     end
@@ -275,27 +333,32 @@ local function linearVelocityBall(player, char, size, effect, UltimateActive)
     if size == 5 and UltimateActive == false then
         ball.Name = "MassiveBall_LV"
     end
-    if player:HasTag("RedTeam") then -- Changes ball color depending on which team the player chose
+    if ball.Name == "Ball_LV" or ball.Name =="Ball_LV2" then
+        if player:HasTag("RedTeam") then -- Changes ball color depending on which team the player chose
         ball.BrickColor = BrickColor.new("Bright red")
         ball.Trail.Color = ColorSequence.new(Color3.fromRGB(255, 0, 0))  -- Red
         ball.Trail2.Color = ColorSequence.new(Color3.fromRGB(255, 0, 0))  -- Red
-    
-    elseif player:HasTag("BlueTeam") then
-        ball.BrickColor = BrickColor.new("Bright blue")
-        ball.Trail.Color = ColorSequence.new(Color3.fromRGB(0, 0, 255))  -- Blue
-        ball.Trail2.Color = ColorSequence.new(Color3.fromRGB(0, 0, 255))  -- Blue
+        elseif player:HasTag("BlueTeam") then
+            ball.BrickColor = BrickColor.new("Bright blue")
+            ball.Trail.Color = ColorSequence.new(Color3.fromRGB(0, 0, 255))  -- Blue
+            ball.Trail2.Color = ColorSequence.new(Color3.fromRGB(0, 0, 255))  -- Blue
 
-    elseif player:HasTag("GreenTeam") then
-        ball.BrickColor = BrickColor.new("Bright green")
-        ball.Trail.Color = ColorSequence.new(Color3.fromRGB(0, 255, 0))  -- Green
-        ball.Trail2.Color = ColorSequence.new(Color3.fromRGB(0, 255, 0))  -- Green
-    
-    elseif player:HasTag("BrownTeam") then
-        ball.BrickColor = BrickColor.new("Brown")
-        ball.Trail.Color = ColorSequence.new(Color3.fromRGB(139, 69, 19))  -- Brown
-        ball.Trail2.Color = ColorSequence.new(Color3.fromRGB(139, 69, 19))  -- Brown
+        elseif player:HasTag("GreenTeam") then
+            ball.BrickColor = BrickColor.new("Bright green")
+            ball.Trail.Color = ColorSequence.new(Color3.fromRGB(0, 255, 0))  -- Green
+            ball.Trail2.Color = ColorSequence.new(Color3.fromRGB(0, 255, 0))  -- Green
+        
+        elseif player:HasTag("BrownTeam") then
+            ball.BrickColor = BrickColor.new("Brown")
+            ball.Trail.Color = ColorSequence.new(Color3.fromRGB(139, 69, 19))  -- Brown
+            ball.Trail2.Color = ColorSequence.new(Color3.fromRGB(139, 69, 19))  -- Brown
+        end
     end
     
+    
+    if player.Character.UltimateActivated.Value == true then
+        ball.BrickColor = BrickColor.new("Alder")
+    end
     
     ball.Parent = workspace
     ball.Touched:Connect(function(hit)
@@ -303,7 +366,7 @@ local function linearVelocityBall(player, char, size, effect, UltimateActive)
             hit.BrickColor = BrickColor.new("Really red")
         end
         -- touched event for dmg on balls, and also debounce of 0.5 seconds so players won't die so fast.
-        if hit.Parent:isA("Model") then
+        if hit.Parent:isA("Model") == true then
             print("Hit "..hit.Parent.Name)
             if ball.Hit.Value == false then
                 if hit.Parent.name ~= char.name then
@@ -368,7 +431,7 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
     
             linearVelocityBall(player, player.Character, 2, nil, UltimateActive)
             local co = coroutine.create(AbilitiesCD)
-            coroutine.resume(co, Ability, TextBoxCD)
+            coroutine.resume(co, Ability, TextBoxCD, player)
 
         elseif UltimateActive == true then
             local soundsfx = SoundService["Antiproton-Delphic Pistol Blast"]:Clone()
@@ -378,7 +441,7 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
     
             linearVelocityBall(player, player.Character, 4, nil, UltimateActive)
             local co = coroutine.create(AbilitiesCD)
-            coroutine.resume(co, Ability, TextBoxCD)
+            coroutine.resume(co, Ability, TextBoxCD, player)
             print("Shot Ultimate ability 1")
         end
     elseif Ability == 2 then
@@ -390,47 +453,59 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
     
             linearVelocityBall(player, player.Character, 5, ReplicatedStorage.Lightningsmall, UltimateActive)
             local co = coroutine.create(AbilitiesCD)
-            coroutine.resume(co, Ability, TextBoxCD)
+            coroutine.resume(co, Ability, TextBoxCD, player)
 
         elseif UltimateActive == true then
-            local Magic1 = SoundService.Magic1:Clone()
-            Magic1.Parent = SoundService
-            Magic1:Play()
-            Debris:AddItem(Magic1, 1)
+            local sound = SoundService.Explosion1:Clone()
+            sound.Parent = SoundService
+            sound:Play()
+            Debris:AddItem(sound, 4)
     
-            linearVelocityBall(player, player.Character, 5, nil, UltimateActive)
+            linearVelocityBall(player, player.Character, 10, nil, UltimateActive, "EnormousBlast")
             local co = coroutine.create(AbilitiesCD)
-            coroutine.resume(co, Ability, TextBoxCD)
+            coroutine.resume(co, Ability, TextBoxCD, player)
             print("Shot Ultimate ability 2")
         end
     elseif Ability == 3 then
         if UltimateActive == false then
             player.Character:WaitForChild("Healing").Value = true
-        local health = SoundService["Undertale - Heal"]:Clone()
-        health.Parent = SoundService
-        health:Play()
-        Debris:AddItem(health, 1)
-        HealPlayer(player)
+            local health = SoundService["Undertale - Heal"]:Clone()
+            health.Parent = SoundService
+            health:Play()
+            Debris:AddItem(health, 1)
+            HealPlayer(player)
 
-        local co = coroutine.create(AbilitiesCD)
-        coroutine.resume(co, Ability, TextBoxCD)
+            local co = coroutine.create(AbilitiesCD)
+            coroutine.resume(co, Ability, TextBoxCD, player)
 
         elseif UltimateActive == true then
             print("Shot Ultimate ability 3")
+
+            UltimateAbility4(player)
+
         end
     elseif Ability == 4 then
         if UltimateActive == false then
             local rockEffect = SoundService["Rock Impact 1 (SFX)"]:Clone()
-        rockEffect.Parent = SoundService
-        rockEffect:Play()
-        Debris:AddItem(rockEffect, 3)
-        WallAbility(player)
+            rockEffect.Parent = SoundService
+            rockEffect:Play()
+            Debris:AddItem(rockEffect, 3)
+            WallAbility(player)
 
-        local co = coroutine.create(AbilitiesCD)
-        coroutine.resume(co, Ability, TextBoxCD)
+            local co = coroutine.create(AbilitiesCD)
+            coroutine.resume(co, Ability, TextBoxCD, player)
 
         elseif UltimateActive == true then
             print("Shot Ultimate ability 4")
+
+            local soundsfx = SoundService.explode4:Clone()
+            soundsfx.Parent = SoundService
+            soundsfx:Play()
+            Debris:AddItem(soundsfx, 3)
+            WallAbility(player)
+
+            local co = coroutine.create(AbilitiesCD)
+            coroutine.resume(co, Ability, TextBoxCD, player)
         end
     end 
 end) 

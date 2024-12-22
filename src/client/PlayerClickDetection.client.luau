@@ -114,7 +114,6 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
                 regenhp.BorderColor3 = Color3.fromHex("#aa0000")
                 wall.BorderColor3 = Color3.fromHex("#aa0000")
 
-                SoundService["Power Outage"]:Play()
                 
                 TweenService:Create(blastpower, tweeninfo, {TextTransparency = 1}):Play()
                 TweenService:Create(massiveblast, tweeninfo, {TextTransparency = 1}):Play()

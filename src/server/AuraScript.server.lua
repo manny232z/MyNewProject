@@ -126,6 +126,8 @@ local tweenInfo = TweenInfo.new(
 
 ReplicatedStorage.GivAuraEvent.OnServerEvent:Connect(function(player, num)
 	if num == 1 then
+        player.UltimateActivated.Value = true
+        player.transforming.Value = true
         ReplicatedStorage.CameraShakeEvent:FireClient(player, "Transformation")
         player.Character.Humanoid.WalkSpeed = 0
         task.wait(0.5)
@@ -135,7 +137,6 @@ ReplicatedStorage.GivAuraEvent.OnServerEvent:Connect(function(player, num)
         SoundService["Super Smash Bros Ultimate Smash Ball Sound Effect"]:Play()
 
         player.Character.Humanoid.AutoRotate = false
-        player.UltimateActivated.Value = true
         player.Character.Humanoid.JumpHeight = 0
         player.bloodlust.Value = 0
 
@@ -145,7 +146,11 @@ ReplicatedStorage.GivAuraEvent.OnServerEvent:Connect(function(player, num)
 		transformationPart.CFrame = player.Character.HumanoidRootPart.CFrame 
 		TweenService:Create(transformationPart, tweenInfo, {Size = Vector3.new(50,50,50)}):Play()
         task.wait(3)
-        SoundService["Power Outage"]:Play()
+        if player.Name == "BEASTIESAVAGE" then
+            SoundService["fart with reverb"]:Play()
+        else
+            SoundService["Power Outage"]:Play()
+        end
         TweenService:Create(transformationPart, tweenInfo, {Size = Vector3.new(0,0,0)}):Play()
 		task.wait(1.5)
 		player.Character.Humanoid.WalkSpeed = 30
@@ -154,11 +159,13 @@ ReplicatedStorage.GivAuraEvent.OnServerEvent:Connect(function(player, num)
         transformationPart:Destroy()
         highlight:Destroy()
         GiveAura(player)
+        player.transforming.Value = false
 	elseif num == 2 then
 		removeParticleEmitters(player)
 		player.UltimateActivated.Value = false
 		player.Character.Humanoid.WalkSpeed = 22
 		player.bloodlust.Value = 0
+        player.leaderstats.bloodlust.Value = 0
 		player.num.Value = 0
 	end
 end)

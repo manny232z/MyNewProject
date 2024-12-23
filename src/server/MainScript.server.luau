@@ -5,7 +5,7 @@ local Debris = game:GetService("Debris")
 local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 local ball_lv = ReplicatedStorage.Ball_LV
-local ttl = 6
+local ttl = 5
 
 local Touched_Debounce = false
 
@@ -98,13 +98,15 @@ end
 -- Adding of speed and jumpheight to the players character.
 Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function(character)
-        if player:FindFirstChild("bloodlust") == nil and player:FindFirstChild("num") == nil and player:FindFirstChild("UltimateActivated") == nil then
+        if player:FindFirstChild("bloodlust") == nil and player:FindFirstChild("num") == nil and player:FindFirstChild("UltimateActivated") == nil and player:FindFirstChild("Transforming") == nil then
             local bloodlust = Instance.new("IntValue", player)
             bloodlust.Name = "bloodlust"
             local num = Instance.new("NumberValue", player)
             num.Name = "num"
             local BoolValue3 = Instance.new("BoolValue", player)
             BoolValue3.Name = "UltimateActivated"
+            local transforming = Instance.new("BoolValue", player)
+            transforming.Name = "transforming"
         else
             print(player.Name.." AREADY HAVE ALL THESE OBJECT VALUES")
         end
@@ -388,7 +390,12 @@ local function linearVelocityBall(player, char, size, effect, UltimateActive, ab
     ball.Parent = workspace
     ball.Touched:Connect(function(hit)
         if hit.Name == "HealPart" then
+            local soundsfx = SoundService["Minecraft Hit Sound Effect"]
             hit.BrickColor = BrickColor.new("Really red")
+            hit.Anchored = false
+            if soundsfx.Playing == false then
+                soundsfx:Play()
+            end
         end
         -- touched event for dmg on balls, and also debounce of 0.5 seconds so players won't die so fast.
         if hit.Parent:IsA("Model") then

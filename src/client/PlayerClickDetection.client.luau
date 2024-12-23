@@ -41,6 +41,10 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
         -- Only fire the event if the input was not processed by other UI elements
         if not gameProcessedEvent then
             print("Player clicked or tapped")
+            if player.transforming.Value ~= false then
+                print(player.Name.." IS TRANSFORMING CANNOT PERFORM ANY OTHER MOVES")
+                return
+            end
             if player.PlayerGui.ScreenGui.Abilities.BlastPower:GetAttribute("Selected") == true and ability1Debounce == false and player.Character.Healing.Value == false then
                 if player.UltimateActivated.Value == true then
                     ability1Debounce =  true
@@ -105,6 +109,8 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
                 end
 
             elseif player.PlayerGui.ScreenGui.Ultimate.TextButton:GetAttribute("Selected") == true and player.Character.Healing.Value == false and player.UltimateActivated.Value == false then
+                player.UltimateActivated.Value = true
+                player.transforming.Value = true
                 local progessbar = player.PlayerGui.ScreenGui.Ultimate.ProgressBar
                 --[[TweenService:Create(progessbar, tweeninfo, {Size = UDim2.new(0, 0, 1, 0)}):Play()
                 SoundService["Power Outage"]:Play()--]]

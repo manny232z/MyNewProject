@@ -5,7 +5,7 @@ local Debris = game:GetService("Debris")
 local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 local ball_lv = ReplicatedStorage.Ball_LV
-local ttl = 10
+local ttl = 6
 
 local Touched_Debounce = false
 
@@ -193,7 +193,7 @@ local function WallAbility(player)
     
             if player.UltimateActivated.Value == true then
                 Wall.Health.Value -= 20 -- Damage if Ultimate is active
-            elseif player.Character.UltimateActivated.Value == false then
+            elseif player.UltimateActivated.Value == false then
                 Wall.Health.Value -= 18  -- Normal damage
             else
                 warn("DAMAGE DIDN'T HAPPEN - POTENTIAL ERROR")
@@ -250,7 +250,7 @@ local function WallAbility(player)
     
             if player.UltimateActivated.Value == true then
                 Wall.Health.Value -= 50  -- Damage if Ultimate is active
-            elseif player.Character.UltimateActivated.Value == false then
+            elseif player.UltimateActivated.Value == false then
                 Wall.Health.Value -= 25  -- Normal damage
             else
                 warn("DAMAGE DIDN'T HAPPEN - POTENTIAL ERROR")
@@ -358,7 +358,7 @@ local function linearVelocityBall(player, char, size, effect, UltimateActive, ab
     if size == 5 and UltimateActive == false then
         ball.Name = "MassiveBall_LV"
     end
-    if ball.Name == "Ball_LV" or ball.Name =="Ball_LV2" then
+    if ball.Name == "Ball_LV" or ball.Name =="Ball_LV2" or ball.Name == "MassiveBall_LV" then
         if player:HasTag("RedTeam") then -- Changes ball color depending on which team the player chose
         ball.BrickColor = BrickColor.new("Bright red")
         ball.Trail.Color = ColorSequence.new(Color3.fromRGB(255, 0, 0))  -- Red

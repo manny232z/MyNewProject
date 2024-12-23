@@ -143,6 +143,19 @@ ReplicatedStorage.GivAuraEvent.OnServerEvent:Connect(function(player, num)
 		--task.wait(1)
 		local transformationPart = ReplicatedStorage.TransformationPart:Clone()
 		transformationPart.Parent = workspace
+        transformationPart.Touched:Connect(function(otherpart)
+            if otherpart.Name == "Ball_LV" or otherpart.Name == "MassiveBall_LV" or otherpart.Name == "Ball_LV3" or otherpart.Name == "Ball_LV2" then
+                otherpart.BrickColor = BrickColor.new("Alder")
+                otherpart.Material = Enum.Material.Neon
+                otherpart.LinearVelocity:Destroy()
+                otherpart.Hit:Destroy()
+                otherpart.CanCollide = false
+                task.wait(0.3)
+                otherpart.Anchored = true
+                task.wait(3)
+                otherpart.Anchored = false
+            end
+        end)
 		transformationPart.CFrame = player.Character.HumanoidRootPart.CFrame 
 		TweenService:Create(transformationPart, tweenInfo, {Size = Vector3.new(50,50,50)}):Play()
         task.wait(3)

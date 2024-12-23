@@ -169,6 +169,7 @@ ReplicatedStorage.GivAuraEvent.OnServerEvent:Connect(function(player, num)
 		player.Character.Humanoid.WalkSpeed = 30
         player.Character.Humanoid.AutoRotate = true
         player.Character.Humanoid.JumpHeight = 5
+		player.Character.Humanoid.Health = 100
         transformationPart:Destroy()
         highlight:Destroy()
         GiveAura(player)

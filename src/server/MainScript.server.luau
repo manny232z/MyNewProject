@@ -193,9 +193,9 @@ local function WallAbility(player)
                 Wall.BillboardGui.Frame.HealthLabel.TextColor3 = Color3.new(1, 0.278431, 0.278431)
             end
     
-            if player.UltimateActivated.Value == true then
+            if object.UltDmg.Value == true then
                 Wall.Health.Value -= 20 -- Damage if Ultimate is active
-            elseif player.UltimateActivated.Value == false then
+            elseif object.UltDmg.Value == false then
                 Wall.Health.Value -= 18  -- Normal damage
             else
                 warn("DAMAGE DIDN'T HAPPEN - POTENTIAL ERROR")
@@ -250,9 +250,9 @@ local function WallAbility(player)
                 Wall.BillboardGui.Frame.HealthLabel.TextColor3 = Color3.new(1, 0.278431, 0.278431)
             end
     
-            if player.UltimateActivated.Value == true then
+            if object.UltDmg.Value == true then
                 Wall.Health.Value -= 50  -- Damage if Ultimate is active
-            elseif player.UltimateActivated.Value == false then
+            elseif object.UltDmg.Value == false then
                 Wall.Health.Value -= 25  -- Normal damage
             else
                 warn("DAMAGE DIDN'T HAPPEN - POTENTIAL ERROR")
@@ -352,6 +352,17 @@ local function linearVelocityBall(player, char, size, effect, UltimateActive, ab
     elseif UltimateActive == false then
         ball = ReplicatedStorage.Ball_LV:Clone()
     end
+
+    if player.UltimateActivated.Value == true then
+        local UltDmg = Instance.new("BoolValue", ball)
+        UltDmg.Name = "UltDmg"
+        UltDmg.Value = true
+    elseif player.UltimateActivated.Value == false then
+        local UltDmg = Instance.new("BoolValue", ball)
+        UltDmg.Name = "UltDmg"
+        UltDmg.Value = false
+    end
+
     if effect ~= nil then
         local newEffect = effect:Clone()
         newEffect.Parent = ball 

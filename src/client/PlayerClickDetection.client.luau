@@ -42,14 +42,14 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
         if not gameProcessedEvent then
             print("Player clicked or tapped")
             if player.PlayerGui.ScreenGui.Abilities.BlastPower:GetAttribute("Selected") == true and ability1Debounce == false and player.Character.Healing.Value == false then
-                if player.Character.UltimateActivated.Value == true then
+                if player.UltimateActivated.Value == true then
                     ability1Debounce =  true
                     print(player.Name.." Clicked super blast ability")
                     ReplicatedStorage.RemoteEvent:FireServer(1, 0.3, Abilities.BlastPowerCD, true)
                     task.wait(0.3) -- ability Cool down
                     task.wait(0.2)
                     ability1Debounce = false
-                elseif player.Character.UltimateActivated.Value == false then
+                elseif player.UltimateActivated.Value == false then
                     ability1Debounce =  true
                     ReplicatedStorage.RemoteEvent:FireServer(1, 0.3, Abilities.BlastPowerCD, false)
                     task.wait(0.3) -- ability Cool down
@@ -58,14 +58,14 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
                 end
 
             elseif player.PlayerGui.ScreenGui.Abilities["Massive Blast"]:GetAttribute("Selected") == true and ability2Debounce == false and player.Character.Healing.Value == false then
-                if player.Character.UltimateActivated.Value == true then
+                if player.UltimateActivated.Value == true then
                     ability2Debounce = true
                     print(player.Name.." Clicked EnormousBlast ability")
                     ReplicatedStorage.RemoteEvent:FireServer(2, 2, Abilities.MassiveBlastCD, true)
                     task.wait(2) -- ability Cooldown
                     task.wait(1.5)
                     ability2Debounce = false
-                elseif player.Character.UltimateActivated.Value == false then
+                elseif player.UltimateActivated.Value == false then
                     ability2Debounce = true
                     ReplicatedStorage.RemoteEvent:FireServer(2, 0.7, Abilities.MassiveBlastCD, false)
                     task.wait(0.7) -- ability Cooldown
@@ -74,13 +74,13 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
                 end
 
             elseif player.PlayerGui.ScreenGui.Abilities["Regen hp+"]:GetAttribute("Selected") == true and ability3Debounce == false  then
-                if player.Character.UltimateActivated.Value == true then
+                if player.UltimateActivated.Value == true then
                     ability3Debounce = true
                     print(player.Name.." Clicked Sacrifice ability")
                     ReplicatedStorage.RemoteEvent:FireServer(3, 5, Abilities.RegenHP_CD, true)
                     task.wait(10) -- ability Cooldown
                     ability3Debounce = false
-                elseif player.Character.UltimateActivated.Value == false then
+                elseif player.UltimateActivated.Value == false then
                     ability3Debounce = true
                     ReplicatedStorage.RemoteEvent:FireServer(3, 5, Abilities.RegenHP_CD, false)
                     task.wait(10) -- ability Cooldown
@@ -88,14 +88,14 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
                 end
 
             elseif player.PlayerGui.ScreenGui.Abilities.Wall:GetAttribute("Selected") == true and ability4Debounce == false and player.Character.Healing.Value == false then
-                if player.Character.UltimateActivated.Value == true then
+                if player.UltimateActivated.Value == true then
                     ability4Debounce = true
                     print(player.Name.." Clicked GiantWall ability")
                     ReplicatedStorage.RemoteEvent:FireServer(4, 5, Abilities.WallCD, true)
                     task.wait(5) -- ability Cooldown
                     task.wait(1.5)
                     ability4Debounce = false
-                elseif player.Character.UltimateActivated.Value == false then
+                elseif player.UltimateActivated.Value == false then
                     ability4Debounce = true
                     print(player.Name.." Clicked Wall ability")
                     ReplicatedStorage.RemoteEvent:FireServer(4, 5, Abilities.WallCD, false)
@@ -104,7 +104,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
                     ability4Debounce = false
                 end
 
-            elseif player.PlayerGui.ScreenGui.Ultimate.TextButton:GetAttribute("Selected") == true and player.Character.Healing.Value == false and player.Character.UltimateActivated.Value == false then
+            elseif player.PlayerGui.ScreenGui.Ultimate.TextButton:GetAttribute("Selected") == true and player.Character.Healing.Value == false and player.UltimateActivated.Value == false then
                 local progessbar = player.PlayerGui.ScreenGui.Ultimate.ProgressBar
                 --[[TweenService:Create(progessbar, tweeninfo, {Size = UDim2.new(0, 0, 1, 0)}):Play()
                 SoundService["Power Outage"]:Play()--]]

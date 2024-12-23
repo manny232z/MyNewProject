@@ -47,7 +47,7 @@ local function AbilitiesCD(Ability, TextBoxCD, player)
     end
 
     if Ability == 2 then
-        if player.Character.UltimateActivated.Value == true then
+        if player.UltimateActivated.Value == true then
             TextBoxCD.BackgroundTransparency = 0.5
             print(TextBoxCD)
             for i = 2, 0, -1 do
@@ -57,7 +57,7 @@ local function AbilitiesCD(Ability, TextBoxCD, player)
             end
             TextBoxCD.BackgroundTransparency = 1
             TextBoxCD.Text = ""  -- Clear the text after the countdown ends
-        elseif player.Character.UltimateActivated.Value == false then
+        elseif player.UltimateActivated.Value == false then
             TextBoxCD.BackgroundTransparency = 0.5
             print(TextBoxCD)
             for i = 0.7, 0, -0.1 do
@@ -98,14 +98,26 @@ end
 -- Adding of speed and jumpheight to the players character.
 Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function(character)
-        character.Humanoid.WalkSpeed = 22
-        character.Humanoid.JumpHeight = 5
-        local bloodlust = Instance.new("IntValue", player.character)
-        bloodlust.Name = "bloodlust"
-        local num = Instance.new("NumberValue", player.character)
-        num.Name = "num"
-        local BoolValue3 = Instance.new("BoolValue", player.character)
-        BoolValue3.Name = "UltimateActivated"
+        if player:FindFirstChild("bloodlust") == nil and player:FindFirstChild("num") == nil and player:FindFirstChild("UltimateActivated") == nil then
+            local bloodlust = Instance.new("IntValue", player)
+            bloodlust.Name = "bloodlust"
+            local num = Instance.new("NumberValue", player)
+            num.Name = "num"
+            local BoolValue3 = Instance.new("BoolValue", player)
+            BoolValue3.Name = "UltimateActivated"
+        else
+            print(player.Name.." AREADY HAVE ALL THESE OBJECT VALUES")
+        end
+
+        if player.UltimateActivated.Value == true then
+            character.Humanoid.WalkSpeed = 30
+            character.Humanoid.JumpHeight = 5
+            ReplicatedStorage.AuraRespawnEvent:Fire(player)
+        elseif player.UltimateActivated.Value == false then
+            character.Humanoid.WalkSpeed = 22
+            character.Humanoid.JumpHeight = 5
+        end
+        
         local BoolValue = Instance.new("BoolValue", player.Character)
         BoolValue.Name = "Healing"
         for i, v in pairs(workspace:GetChildren()) do
@@ -129,7 +141,7 @@ local function WallAbility(player)
     Wall.CollisionGroup = "WallGroup"
     local character = player.Character
     local head = character:WaitForChild("HumanoidRootPart")
-    if player.Character.UltimateActivated.Value == true then
+    if player.UltimateActivated.Value == true then
         print("ULTIMATE WALL ABILITY")
         Wall.Material = Enum.Material.Neon
         Wall.BrickColor = BrickColor.new("Royal purple")
@@ -179,7 +191,7 @@ local function WallAbility(player)
                 Wall.BillboardGui.Frame.HealthLabel.TextColor3 = Color3.new(1, 0.278431, 0.278431)
             end
     
-            if player.Character.UltimateActivated.Value == true then
+            if player.UltimateActivated.Value == true then
                 Wall.Health.Value -= 20 -- Damage if Ultimate is active
             elseif player.Character.UltimateActivated.Value == false then
                 Wall.Health.Value -= 18  -- Normal damage
@@ -211,9 +223,9 @@ local function WallAbility(player)
     
             -- Sound logic for the first condition
             local SoundSFX
-            if player.Character.UltimateActivated.Value == false then
+            if player.UltimateActivated.Value == false then
                 SoundSFX = SoundService["Shale Break 1 (SFX)"]:Clone()
-            elseif player.Character.UltimateActivated.Value == true then
+            elseif player.UltimateActivated.Value == true then
                 SoundSFX = SoundService["Starbound Tank Shot (Semi-Distorted)"]:Clone()
             end
             SoundSFX.Parent = SoundService
@@ -236,7 +248,7 @@ local function WallAbility(player)
                 Wall.BillboardGui.Frame.HealthLabel.TextColor3 = Color3.new(1, 0.278431, 0.278431)
             end
     
-            if player.Character.UltimateActivated.Value == true then
+            if player.UltimateActivated.Value == true then
                 Wall.Health.Value -= 50  -- Damage if Ultimate is active
             elseif player.Character.UltimateActivated.Value == false then
                 Wall.Health.Value -= 25  -- Normal damage
@@ -268,9 +280,9 @@ local function WallAbility(player)
     
             -- Sound logic for the second condition
             local SoundSFX
-            if player.Character.UltimateActivated.Value == false then
+            if player.UltimateActivated.Value == false then
                 SoundSFX = SoundService["Rock Impact 22 (SFX)"]:Clone()
-            elseif player.Character.UltimateActivated.Value == true then
+            elseif player.UltimateActivated.Value == true then
                 SoundSFX = SoundService["Starbound Tank Shot (Semi-Distorted)"]:Clone()
             end
             SoundSFX.Parent = SoundService
@@ -291,9 +303,9 @@ end
 
 
 local function UltimateAbility4(player)
-    local highlight = Instance.new("Highlight", player.Character)
+    --[[local highlight = Instance.new("Highlight", player.Character)
     highlight.FillColor = Color3.new(0.878431, 0.250980, 0.901960)
-    highlight.OutlineColor = Color3.new(0.878431, 0.235294, 0.235294)
+    highlight.OutlineColor = Color3.new(0.878431, 0.235294, 0.235294)--]]
 end
 
 -- heal player function
@@ -369,7 +381,7 @@ local function linearVelocityBall(player, char, size, effect, UltimateActive, ab
     end
     
     
-    if player.Character.UltimateActivated.Value == true then
+    if player.UltimateActivated.Value == true then
         ball.BrickColor = BrickColor.new("Alder")
     end
     
@@ -392,13 +404,13 @@ local function linearVelocityBall(player, char, size, effect, UltimateActive, ab
                             player.leaderstats.bloodlust.Value += 1
                             SoundService["strong sword slash"]:Play()
                             hit.Parent.Dead.Value = true
-                            local bloodlust = player.Character.bloodlust 
-                            local num = player.Character.num
+                            local bloodlust = player.bloodlust 
+                            local num = player.num
                             bloodlust.Value += 1
                             if num.Value ~= 1 then
                                 num.Value += 0.2
                             end
-                            if player.Character.UltimateActivated.Value == false then
+                            if player.UltimateActivated.Value == false then
                                 print("ULTIMATE PROGRESS BAR EVENT HAPPENED")
                                 ReplicatedStorage.UltimateEvent:FireClient(player, num, bloodlust)
                             else

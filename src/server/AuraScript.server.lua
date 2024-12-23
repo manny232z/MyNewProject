@@ -135,9 +135,9 @@ ReplicatedStorage.GivAuraEvent.OnServerEvent:Connect(function(player, num)
         SoundService["Super Smash Bros Ultimate Smash Ball Sound Effect"]:Play()
 
         player.Character.Humanoid.AutoRotate = false
-        player.Character.UltimateActivated.Value = true
+        player.UltimateActivated.Value = true
         player.Character.Humanoid.JumpHeight = 0
-        player.Character.bloodlust.Value = 0
+        player.bloodlust.Value = 0
 
 		--task.wait(1)
 		local transformationPart = ReplicatedStorage.TransformationPart:Clone()
@@ -156,9 +156,13 @@ ReplicatedStorage.GivAuraEvent.OnServerEvent:Connect(function(player, num)
         GiveAura(player)
 	elseif num == 2 then
 		removeParticleEmitters(player)
-		player.Character.UltimateActivated.Value = false
+		player.UltimateActivated.Value = false
 		player.Character.Humanoid.WalkSpeed = 22
-		player.Character.bloodlust.Value = 0
-		player.Character.num.Value = 0
+		player.bloodlust.Value = 0
+		player.num.Value = 0
 	end
+end)
+
+ReplicatedStorage.AuraRespawnEvent.Event:Connect(function(player)
+    GiveAura(player)
 end)

@@ -466,6 +466,7 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
         end
     elseif Ability == 2 then
         if UltimateActive == false then
+            ReplicatedStorage.CameraShakeEvent:FireClient(player, "Ability2")
             local Magic1 = SoundService.Magic1:Clone()
             Magic1.Parent = SoundService
             Magic1:Play()
@@ -476,6 +477,7 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
             coroutine.resume(co, Ability, TextBoxCD, player)
 
         elseif UltimateActive == true then
+            ReplicatedStorage.CameraShakeEvent:FireClient(player, "ULT4")
             local sound = SoundService.Explosion1:Clone()
             sound.Parent = SoundService
             sound:Play()
@@ -506,6 +508,7 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
         end
     elseif Ability == 4 then
         if UltimateActive == false then
+            ReplicatedStorage.CameraShakeEvent:FireClient(player, "WallAbility")
             local rockEffect = SoundService["Rock Impact 1 (SFX)"]:Clone()
             rockEffect.Parent = SoundService
             rockEffect:Play()
@@ -518,6 +521,7 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
         elseif UltimateActive == true then
             print("Shot Ultimate ability 4")
 
+            ReplicatedStorage.CameraShakeEvent:FireClient(player, "WallAbility2")
             local soundsfx = SoundService.explode4:Clone()
             soundsfx.Parent = SoundService
             soundsfx:Play()

@@ -126,6 +126,7 @@ local tweenInfo = TweenInfo.new(
 
 ReplicatedStorage.GivAuraEvent.OnServerEvent:Connect(function(player, num)
 	if num == 1 then
+        ReplicatedStorage.CameraShakeEvent:FireClient(player, "Transformation")
         player.Character.Humanoid.WalkSpeed = 0
         task.wait(0.5)
 		local highlight = Instance.new("Highlight", player.Character)
@@ -149,6 +150,7 @@ ReplicatedStorage.GivAuraEvent.OnServerEvent:Connect(function(player, num)
 		task.wait(1.5)
 		player.Character.Humanoid.WalkSpeed = 30
         player.Character.Humanoid.AutoRotate = true
+        player.Character.Humanoid.JumpHeight = 5
         transformationPart:Destroy()
         highlight:Destroy()
         GiveAura(player)
@@ -157,7 +159,6 @@ ReplicatedStorage.GivAuraEvent.OnServerEvent:Connect(function(player, num)
 		player.Character.UltimateActivated.Value = false
 		player.Character.Humanoid.WalkSpeed = 22
 		player.Character.bloodlust.Value = 0
-        player.Character.Humanoid.JumpHeight = 5
 		player.Character.num.Value = 0
 	end
 end)

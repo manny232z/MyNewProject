@@ -159,11 +159,8 @@ ReplicatedStorage.GivAuraEvent.OnServerEvent:Connect(function(player, num)
 		transformationPart.CFrame = player.Character.HumanoidRootPart.CFrame 
 		TweenService:Create(transformationPart, tweenInfo, {Size = Vector3.new(50,50,50)}):Play()
         task.wait(3)
-        if player.Name == "BEASTIESAVAGE" then
-            SoundService["fart with reverb"]:Play()
-        else
-            SoundService["Power Outage"]:Play()
-        end
+		SoundService["Power Outage"]:Play()
+
         TweenService:Create(transformationPart, tweenInfo, {Size = Vector3.new(0,0,0)}):Play()
 		task.wait(1.5)
 		player.Character.Humanoid.WalkSpeed = 30

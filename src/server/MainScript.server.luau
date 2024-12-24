@@ -98,7 +98,7 @@ end
 -- Adding of speed and jumpheight to the players character.
 Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function(character)
-        if player:FindFirstChild("bloodlust") == nil and player:FindFirstChild("num") == nil and player:FindFirstChild("UltimateActivated") == nil and player:FindFirstChild("Transforming") == nil then
+        if player:FindFirstChild("bloodlust") == nil and player:FindFirstChild("num") == nil and player:FindFirstChild("UltimateActivated") == nil and player:FindFirstChild("Transforming") == nil and player.Character:FindFirstAncestor("TimerGui") == nil then
             local bloodlust = Instance.new("IntValue", player)
             bloodlust.Name = "bloodlust"
             local num = Instance.new("NumberValue", player)
@@ -107,6 +107,8 @@ Players.PlayerAdded:Connect(function(player)
             BoolValue3.Name = "UltimateActivated"
             local transforming = Instance.new("BoolValue", player)
             transforming.Name = "transforming"
+            local TimerGui = ReplicatedStorage.TimerGui:Clone()
+            TimerGui.Parent = player.Character.Head
         else
             print(player.Name.." AREADY HAVE ALL THESE OBJECT VALUES")
         end
@@ -305,9 +307,45 @@ end
 
 
 local function UltimateAbility4(player)
-    --[[local highlight = Instance.new("Highlight", player.Character)
-    highlight.FillColor = Color3.new(0.878431, 0.250980, 0.901960)
-    highlight.OutlineColor = Color3.new(0.878431, 0.235294, 0.235294)--]]
+    local headGUI = player.Character.Head.TimerGui.TextLabel
+    local highlight = Instance.new("Highlight", player.Character)
+    highlight.FillColor = Color3.new(0.878431, 0.235294, 0.235294)
+    highlight.OutlineColor = Color3.new(0.878431, 0.235294, 0.235294)
+    player.Character.Head.TimerGui.Enabled = true
+    SoundService["Countdown To Destruction Stab"]:Play()
+    player.Character.Humanoid.WalkSpeed = 0
+    player.Character.Humanoid.AutoRotate = false
+    local SunAttack = ReplicatedStorage.SunAttack:Clone()
+    SunAttack.Parent = workspace
+    SunAttack.CFrame = player.Character.Head.CFrame * CFrame.new(0, 1000, 0)
+    local num = 1
+    
+    for i = 8, 0, -1 do
+        task.wait(1)
+        num -= 0.2
+        SunAttack.Transparency = num
+        headGUI.Text = i
+        SoundService.SFX_Countdown:Play()
+        if i == 0 then
+            task.wait(1)
+            SoundService["Deep Hits Big Reverberant Booms Rumbling Tai (SFX)"]:Play()
+            headGUI.Text = "INCOMING!!!"
+            task.wait(4)
+            SunAttack.Anchored = false
+            SunAttack.Touched:Connect(function(otherPart)
+                --otherPart.BrickColor = BrickColor.new("Alder")
+                if otherPart.Parent:IsA("Model") then
+                    otherPart.Parent.Humanoid.Health = 0
+                    local soundsfx = SoundService["Scream 4003_13_5"]:Clone()
+                    soundsfx.Parent = SoundService
+                    Debris:AddItem(soundsfx, 5)
+                    soundsfx:Play()
+                    task.wait(2)
+                    player.Character.Head.TimerGui.Enabled = false
+                end
+            end)
+        end
+    end
 end
 
 -- heal player function
@@ -465,7 +503,7 @@ local function linearVelocityBall(player, char, size, effect, UltimateActive, ab
     local ballVelocity = ball.LinearVelocity
     ballVelocity.MaxForce = math.huge
     ball.CFrame = HumanoidRootPart.CFrame * CFrame.new(0, 1, -3)
-    ballVelocity.VectorVelocity = HumanoidRootPart.CFrame.LookVector * 200
+    ballVelocity.VectorVelocity = HumanoidRootPart.CFrame.LookVector * 300
     Debris:AddItem(ball, ttl)
 end
 
@@ -534,6 +572,7 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
             print("Shot Ultimate ability 3")
 
             UltimateAbility4(player)
+
 
         end
     elseif Ability == 4 then

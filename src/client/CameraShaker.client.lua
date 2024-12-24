@@ -24,5 +24,9 @@ ReplicatedStorage.CameraShakeEvent.OnClientEvent:Connect(function(ability)
         camshake:ShakeSustain(CameraShaker.Presets.Earthquake)
         task.wait(6)
         camshake:StopSustained(1)
+    elseif ability == "SunAttack" then
+        camshake:ShakeSustain(CameraShaker.Presets.Earthquake)
+        task.wait(10)
+        camshake:StopSustained(15)
     end
 end)

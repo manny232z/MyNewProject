@@ -71,7 +71,8 @@ local function AbilitiesCD(Ability, TextBoxCD, player)
     end  
 
     if Ability == 3 then
-        TextBoxCD.BackgroundTransparency = 0.5
+        if player.UltimateActivated.Value == false then
+            TextBoxCD.BackgroundTransparency = 0.5
         print(TextBoxCD)
         for i = 5, 0, -1 do
             TextBoxCD.Text = i  -- Ensure it displays one decimal place
@@ -80,6 +81,17 @@ local function AbilitiesCD(Ability, TextBoxCD, player)
         end
         TextBoxCD.BackgroundTransparency = 1
         TextBoxCD.Text = ""  -- Clear the text after the countdown ends
+        elseif player.UltimateActivated.Value == true then
+            TextBoxCD.BackgroundTransparency = 0.5
+            print(TextBoxCD)
+            for i = 35, 0, -1 do
+                TextBoxCD.Text = i  -- Ensure it displays one decimal place
+                print(i)
+                task.wait(1)  -- Wait for 0.1 seconds before the next iteration
+            end
+            TextBoxCD.BackgroundTransparency = 1
+            TextBoxCD.Text = ""  -- Clear the text after the countdown ends
+        end
     end  
 
     if Ability == 4 then
@@ -98,7 +110,7 @@ end
 -- Adding of speed and jumpheight to the players character.
 Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function(character)
-        if player:FindFirstChild("bloodlust") == nil and player:FindFirstChild("num") == nil and player:FindFirstChild("UltimateActivated") == nil and player:FindFirstChild("Transforming") == nil and player.Character:FindFirstAncestor("TimerGui") == nil then
+        if player:FindFirstChild("bloodlust") == nil and player:FindFirstChild("num") == nil and player:FindFirstChild("UltimateActivated") == nil and player:FindFirstChild("Transforming") == nil then
             local bloodlust = Instance.new("IntValue", player)
             bloodlust.Name = "bloodlust"
             local num = Instance.new("NumberValue", player)
@@ -107,10 +119,14 @@ Players.PlayerAdded:Connect(function(player)
             BoolValue3.Name = "UltimateActivated"
             local transforming = Instance.new("BoolValue", player)
             transforming.Name = "transforming"
-            local TimerGui = ReplicatedStorage.TimerGui:Clone()
-            TimerGui.Parent = player.Character.Head
+            
         else
             print(player.Name.." AREADY HAVE ALL THESE OBJECT VALUES")
+        end
+
+        if player.Character:FindFirstAncestor("TimerGui") == nil then
+            local TimerGui = ReplicatedStorage.TimerGui:Clone()
+            TimerGui.Parent = player.Character.Head
         end
 
         if player.UltimateActivated.Value == true then
@@ -307,6 +323,15 @@ end
 
 
 local function UltimateAbility4(player)
+    local tweenSunInfo = TweenInfo.new(
+        8,
+        Enum.EasingStyle.Quad,
+        Enum.EasingDirection.Out,
+        0,
+        false,
+        0
+    )
+
     local headGUI = player.Character.Head.TimerGui.TextLabel
     local highlight = Instance.new("Highlight", player.Character)
     highlight.FillColor = Color3.new(0.878431, 0.235294, 0.235294)
@@ -318,12 +343,12 @@ local function UltimateAbility4(player)
     local SunAttack = ReplicatedStorage.SunAttack:Clone()
     SunAttack.Parent = workspace
     SunAttack.CFrame = player.Character.Head.CFrame * CFrame.new(0, 1000, 0)
-    local num = 1
+    TweenService:Create(SunAttack, tweenSunInfo, {Transparency = 0}):Play()
+    ReplicatedStorage.CameraShakeEvent:FireAllClients("SunAttack")
+    local num = 0
     
     for i = 8, 0, -1 do
         task.wait(1)
-        num -= 0.2
-        SunAttack.Transparency = num
         headGUI.Text = i
         SoundService.SFX_Countdown:Play()
         if i == 0 then
@@ -331,17 +356,31 @@ local function UltimateAbility4(player)
             SoundService["Deep Hits Big Reverberant Booms Rumbling Tai (SFX)"]:Play()
             headGUI.Text = "INCOMING!!!"
             task.wait(4)
+            SoundService["Static Transform Thunder Lighting Like Blast (SFX)"]:Play()
             SunAttack.Anchored = false
             SunAttack.Touched:Connect(function(otherPart)
                 --otherPart.BrickColor = BrickColor.new("Alder")
+                local bigexplosionsfx = SoundService["Big Explosion"]
                 if otherPart.Parent:IsA("Model") then
                     otherPart.Parent.Humanoid.Health = 0
                     local soundsfx = SoundService["Scream 4003_13_5"]:Clone()
                     soundsfx.Parent = SoundService
                     Debris:AddItem(soundsfx, 5)
                     soundsfx:Play()
+                    if num == 0 then
+                        ReplicatedStorage.CameraShakeEvent:FireAllClients("WallAbility2")
+                        task.wait(1)
+                        ReplicatedStorage.CameraShakeEvent:FireAllClients("WallAbility2")
+                        task.wait(1)
+                        ReplicatedStorage.CameraShakeEvent:FireAllClients("WallAbility2")
+                    end
+                    num = 1
                     task.wait(2)
                     player.Character.Head.TimerGui.Enabled = false
+                elseif otherPart.Name == "Baseplate" then
+                    if bigexplosionsfx.Playing == false then
+                        bigexplosionsfx:Play()
+                    end
                 end
             end)
         end
@@ -570,9 +609,9 @@ ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player, Ability, ab
 
         elseif UltimateActive == true then
             print("Shot Ultimate ability 3")
-
+            local co = coroutine.create(AbilitiesCD)
+            coroutine.resume(co, Ability, TextBoxCD, player)
             UltimateAbility4(player)
-
 
         end
     elseif Ability == 4 then

@@ -81,8 +81,8 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
                 if player.UltimateActivated.Value == true then
                     ability3Debounce = true
                     print(player.Name.." Clicked Sacrifice ability")
-                    ReplicatedStorage.RemoteEvent:FireServer(3, 5, Abilities.RegenHP_CD, true)
-                    task.wait(10) -- ability Cooldown
+                    ReplicatedStorage.RemoteEvent:FireServer(3, 35, Abilities.RegenHP_CD, true)
+                    task.wait(35) -- ability Cooldown
                     ability3Debounce = false
                 elseif player.UltimateActivated.Value == false then
                     ability3Debounce = true

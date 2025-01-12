@@ -476,6 +476,7 @@ local function linearVelocityBall(player, char, size, effect, UltimateActive, ab
     end
     
     ball.Parent = workspace
+    ball:SetNetworkOwner(player)
     ball.Touched:Connect(function(hit)
         if hit.Name == "HealPart" then
             local soundsfx = SoundService["Minecraft Hit Sound Effect"]
@@ -542,7 +543,7 @@ local function linearVelocityBall(player, char, size, effect, UltimateActive, ab
     local ballVelocity = ball.LinearVelocity
     ballVelocity.MaxForce = math.huge
     ball.CFrame = HumanoidRootPart.CFrame * CFrame.new(0, 1, -3)
-    ballVelocity.VectorVelocity = HumanoidRootPart.CFrame.LookVector * 300
+    ballVelocity.VectorVelocity = HumanoidRootPart.CFrame.LookVector * 250
     Debris:AddItem(ball, ttl)
 end
 
